@@ -3,15 +3,14 @@ import "package:firebase_core/firebase_core.dart";
 
 import "../firebase_options.dart";
 import "auth_exceptions.dart";
-//import "auth_provider.dart";
 import "auth_user.dart";
 
-class FirebaseAuthProvider /*implements AuthProvider*/ {
+class FirebaseAuthProvider  {
 const FirebaseAuthProvider();
   factory FirebaseAuthProvider.authService() {
     return const FirebaseAuthProvider();
   }
-  //@override
+
   Future<AuthUser> createUser(
       {required String email, required String password}) async {
     try {
@@ -38,7 +37,6 @@ const FirebaseAuthProvider();
     }
   }
 
-  //@override
   AuthUser? get currentUser {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -48,7 +46,6 @@ const FirebaseAuthProvider();
     }
   }
 
-  //@override
   Future<AuthUser> logIn(
       {required String email, required String password}) async {
     try {
@@ -73,7 +70,6 @@ const FirebaseAuthProvider();
     }
   }
 
-  //@override
   Future<void> logOut() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -83,7 +79,6 @@ const FirebaseAuthProvider();
     }
   }
 
-  //@override
   Future<void> sendEmailVerification() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -93,13 +88,11 @@ const FirebaseAuthProvider();
     }
   }
 
-  //@override
   Future<void> initialize() async {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
   }
   
-  //@override
   Future<void> updateUserEmail({required String email}) async {
     try {
        final user = FirebaseAuth.instance.currentUser;
@@ -121,7 +114,6 @@ const FirebaseAuthProvider();
     }
   }
   
-  //@override
   Future<void> updateUserPassword({required String password}) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -141,7 +133,6 @@ const FirebaseAuthProvider();
     }
     }
     
-      //@override
       Future<void> deleteAccount() async {
         final user = FirebaseAuth.instance.currentUser;
         if (user != null) {
