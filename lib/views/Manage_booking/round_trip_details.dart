@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 
 import '../../services/cloud/firestore_booking.dart';
 import '../../services/cloud/firestore_flight.dart';
-import '../../services_auth/auth_service.dart';
+import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/show_error.dart';
 import '../../utilities/show_feedback.dart';
 import '../Global/global_var.dart';
@@ -468,7 +468,7 @@ class _RoundTripDetailsState extends State<RoundTripDetails> {
                           numOfPas: currentBooking.numOfSeats);
                       print(result);
                       if (result == true) {
-                        c.retrievePreviousBalance(AuthService.firebase().currentUser!.id,canceledBookingPrice);
+                        c.retrievePreviousBalance(FirebaseAuthProvider.authService().currentUser!.id,canceledBookingPrice);
                         showFeedback(context, 'Booking successfully deleted.');
                         Navigator.pop(context);
                       } else {

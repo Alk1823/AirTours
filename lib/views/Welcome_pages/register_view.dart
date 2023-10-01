@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../constants/pages_route.dart';
 import '../../services/cloud/firebase_cloud_storage.dart';
 import '../../services_auth/auth_exceptions.dart';
-import '../../services_auth/auth_service.dart';
+import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/button.dart';
 import '../../utilities/show_error.dart';
 
@@ -19,6 +19,7 @@ class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final TextEditingController _password2;
+
 
   @override
   void initState() {
@@ -126,21 +127,21 @@ class _RegisterViewState extends State<RegisterView> {
                       showErrorDialog(context, "Password Doesn't Match!");
                     } else {
                       try {
-                        await AuthService.firebase()
+                        await FirebaseAuthProvider.authService()
                             .createUser(email: email, password: pass);
 
                         //DB
                         final String userId =
-                            AuthService.firebase().currentUser!.id;
+                            FirebaseAuthProvider.authService().currentUser!.id;
                         final String currentEmail =
-                            AuthService.firebase().currentUser!.email;
+                            FirebaseAuthProvider.authService().currentUser!.email;
                         c.createNewUser(
                             ownerUserId: userId,
                             email: currentEmail,
                             phoneNum: '',
                             balance: 0.0);
                         //DB end
-                        AuthService.firebase().sendEmailVerification();
+                        FirebaseAuthProvider.authService().sendEmailVerification();
                         await Navigator.of(context).pushNamed(verficationRoute);
 
                       } on WeakPasswordAuthException {

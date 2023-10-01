@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../services/cloud/cloud_flight.dart';
 import '../../services/cloud/firestore_flight.dart';
-import '../../services_auth/auth_service.dart';
+import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/show_error.dart';
 
 class CreateFlight extends StatefulWidget {
@@ -543,7 +543,7 @@ class _CreateFlightState extends State<CreateFlight> {
                               child: const Text('Add Admin')),
                           ElevatedButton(
                             onPressed: () {
-                              AuthService.firebase().logOut();
+                              FirebaseAuthProvider.authService().logOut();
                               Navigator.of(context).pushNamed(loginRoute);
                             },
                             style: ElevatedButton.styleFrom(

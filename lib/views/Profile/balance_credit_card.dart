@@ -1,12 +1,12 @@
 
 
 import 'package:AirTours/constants/pages_route.dart';
-import 'package:AirTours/services_auth/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../services/cloud/cloud_storage_exceptions.dart';
+import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/show_feedback.dart';
 
 
@@ -37,7 +37,7 @@ class _ChargeBalanceState extends State<ChargeBalance> {
   //DB
   Future<void> toNext() async {
     try {
-    String userId = AuthService.firebase().currentUser!.id;
+    String userId = FirebaseAuthProvider.authService().currentUser!.id;
     final docRef = user.doc(userId);
     final docSnap = await docRef.get();
     final currentBalance = docSnap.data()!["balance"];

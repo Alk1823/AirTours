@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../constants/pages_route.dart';
 import '../../services/cloud/firebase_cloud_storage.dart';
 import '../../services_auth/auth_exceptions.dart';
-import '../../services_auth/auth_service.dart';
+import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/button.dart';
 import '../../utilities/show_error.dart';
 
@@ -20,6 +20,7 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   FirebaseCloudStorage c = FirebaseCloudStorage();
+
 
   @override
   void initState() {
@@ -102,9 +103,9 @@ class _LoginViewState extends State<LoginView> {
                     final email = _email.text;
                     final pass = _password.text;
                     try {
-                      await AuthService.firebase()
+                      await FirebaseAuthProvider.authService()
                           .logIn(email: email, password: pass);
-                      final user = AuthService.firebase().currentUser;
+                      final user = FirebaseAuthProvider.authService().currentUser;
                       final isUserr = await c.isUser(ownerUserId: user!.id);
                       if (isUserr) {
                         if (user.isEmailVerified) {

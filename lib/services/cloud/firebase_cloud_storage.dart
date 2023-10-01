@@ -1,9 +1,10 @@
 import 'package:AirTours/constants/booking_constants.dart';
 import 'package:AirTours/services/cloud/cloud_storage_exceptions.dart';
 import 'package:AirTours/services/cloud/firestore_flight.dart';
-import 'package:AirTours/services_auth/auth_service.dart';
 import 'package:AirTours/utilities/show_balance.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import '../../services_auth/firebase_auth_provider.dart';
 
 class FirebaseCloudStorage {
   final user = FirebaseFirestore.instance.collection('user');
@@ -12,7 +13,7 @@ class FirebaseCloudStorage {
   final FlightFirestore flights = FlightFirestore();
 
   static final FirebaseCloudStorage _shared =
-      FirebaseCloudStorage._sharedInstance();
+  FirebaseCloudStorage._sharedInstance();
   FirebaseCloudStorage._sharedInstance();
   factory FirebaseCloudStorage() => _shared;
 
@@ -60,14 +61,14 @@ class FirebaseCloudStorage {
 
         if (!isCurrent) {
           await userDocRef.delete();
-          await AuthService.firebase().deleteAccount();
+          await FirebaseAuthProvider.authService().deleteAccount();
           break;
         } 
         }
         
       } else {
         await userDocRef.delete();
-        await AuthService.firebase().deleteAccount();
+        await FirebaseAuthProvider.authService().deleteAccount();
       }
       
     } catch (_) {

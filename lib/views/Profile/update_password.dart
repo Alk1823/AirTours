@@ -3,7 +3,8 @@ import 'package:AirTours/services_auth/auth_exceptions.dart';
 import 'package:AirTours/utilities/show_error.dart';
 import 'package:AirTours/utilities/show_feedback.dart';
 import 'package:flutter/material.dart';
-import '../../services_auth/auth_service.dart';
+
+import '../../services_auth/firebase_auth_provider.dart';
 
 
 
@@ -16,6 +17,7 @@ class UpdatePasswordView extends StatefulWidget {
 
 class _UpdatePasswordViewState extends State<UpdatePasswordView> {
   late final TextEditingController _password;
+
 
   @override
   void initState() {
@@ -45,9 +47,9 @@ class _UpdatePasswordViewState extends State<UpdatePasswordView> {
                   String newPassword = _password.text;
                   if (newPassword.isNotEmpty) {
                     try {
-                      await AuthService.firebase().updateUserPassword(password: newPassword); 
+                      await FirebaseAuthProvider.authService().updateUserPassword(password: newPassword); 
                       await showFeedback(context, 'Information Updated'); 
-                      await AuthService.firebase().logOut();
+                      await FirebaseAuthProvider.authService().logOut();
                       await Navigator.of(context).pushNamed(loginRoute);
                     } on WeakPasswordAuthException { 
                       await showErrorDialog(context, 'Weak Password');

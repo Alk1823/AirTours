@@ -3,7 +3,7 @@ import 'package:AirTours/utilities/show_feedback.dart';
 import 'package:flutter/material.dart';
 import '../../services/cloud/firebase_cloud_storage.dart';
 import '../../services_auth/auth_exceptions.dart';
-import '../../services_auth/auth_service.dart';
+import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/show_error.dart';
 
 
@@ -54,8 +54,8 @@ class _LoginForDeleteState extends State<LoginForDelete> {
             TextButton(
                 onPressed: () async {
                   try {
-                  await AuthService.firebase().logIn(email: _email.text, password: _password.text);
-                  final userId = AuthService.firebase().currentUser!.id;
+                  await FirebaseAuthProvider.authService().logIn(email: _email.text, password: _password.text);
+                  final userId = FirebaseAuthProvider.authService().currentUser!.id;
                   await c.deleteUser(ownerUserId: userId);
                   await showFeedback(context, 'Account Deleted');
                   await Navigator.of(context).pushNamedAndRemoveUntil(

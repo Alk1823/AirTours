@@ -1,9 +1,10 @@
 import 'package:AirTours/constants/pages_route.dart';
 import 'package:AirTours/services/cloud/firebase_cloud_storage.dart';
-import 'package:AirTours/services_auth/auth_service.dart';
 import 'package:AirTours/utilities/show_balance.dart';
 import 'package:AirTours/utilities/show_error.dart';
 import 'package:flutter/material.dart';
+
+import '../../services_auth/firebase_auth_provider.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -14,6 +15,7 @@ class ProfileView extends StatefulWidget {
 
 class _ProfileViewState extends State<ProfileView> {
   final FirebaseCloudStorage c = FirebaseCloudStorage();
+
  
 
   @override
@@ -74,7 +76,7 @@ class _ProfileViewState extends State<ProfileView> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    await AuthService.firebase().logOut();
+                    await FirebaseAuthProvider.authService().logOut();
                     await Navigator.of(context).pushNamedAndRemoveUntil(
                         loginForEmailChangesRoute, 
                         (route) => false
@@ -109,7 +111,7 @@ class _ProfileViewState extends State<ProfileView> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                      await AuthService.firebase().logOut();
+                      await FirebaseAuthProvider.authService().logOut();
                       await Navigator.of(context).pushNamedAndRemoveUntil(
                         loginForPasswordChangesRoute, 
                         (route) => false
@@ -146,12 +148,12 @@ class _ProfileViewState extends State<ProfileView> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    final userId = AuthService.firebase().currentUser!.id;
+                    final userId = FirebaseAuthProvider.authService().currentUser!.id;
                     final isBooking = await c.isCurrentBooking(ownerUserId: userId);
                     if (isBooking) {
                       await showErrorDialog(context, "Account Can't Be Deleted, There Are Bookings In Progress!");
                     } else {
-                        await AuthService.firebase().logOut();
+                        await FirebaseAuthProvider.authService().logOut();
                         await Navigator.of(context).pushNamedAndRemoveUntil(
                           loginForDeleteRoute, 
                           (route) => false

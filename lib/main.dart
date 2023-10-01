@@ -1,4 +1,4 @@
-import 'package:AirTours/services_auth/auth_service.dart';
+import 'package:AirTours/services_auth/firebase_auth_provider.dart';
 import 'package:AirTours/views/Admin/add_admin.dart';
 import 'package:AirTours/views/Admin/admin.dart';
 import 'package:AirTours/views/Global/bottom_bar.dart';
@@ -43,17 +43,18 @@ Future<void> main() async {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: AuthService.firebase().initialize(),
+      future: FirebaseAuthProvider.authService().initialize(),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
-            final user = AuthService.firebase().currentUser;
+            final user = FirebaseAuthProvider.authService().currentUser;
             if (user != null) {
               if (user.isEmailVerified) {
-                AuthService.firebase().logOut();
+                FirebaseAuthProvider.authService().logOut();
                 return const Bottom();
               } else {
                 return const VerifyEmailView();

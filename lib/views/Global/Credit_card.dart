@@ -1,4 +1,3 @@
-import 'package:AirTours/services_auth/auth_service.dart';
 import 'package:AirTours/utilities/show_balance.dart';
 import 'package:AirTours/views/Global/global_var.dart';
 import 'package:AirTours/views/Global/ticket.dart';
@@ -9,6 +8,7 @@ import '../../constants/pages_route.dart';
 import '../../services/cloud/cloud_booking.dart';
 import '../../services/cloud/firestore_booking.dart';
 import '../../services/cloud/firestore_ticket.dart';
+import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/show_error.dart';
 
 
@@ -59,7 +59,7 @@ class _CreditcardState extends State<Creditcard> {
   }
 
   Future<String> createBooking(double totalPrice) async {
-    final bookingUserId = AuthService.firebase().currentUser!.id;
+    final bookingUserId = FirebaseAuthProvider.authService().currentUser!.id;
     DateTime timeNow = DateTime.now();
     if (widget.id2 == 'none') {
       booking = await _bookingService.createNewBooking(
@@ -395,7 +395,7 @@ class _CreditcardState extends State<Creditcard> {
                                 }
                               }
                             });
-                            String userId = AuthService.firebase().currentUser!.id;
+                            String userId = FirebaseAuthProvider.authService().currentUser!.id;
                             final docR = user.doc(userId); //user doc
                             await docR.update({
                               'balance': balance
