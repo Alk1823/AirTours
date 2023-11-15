@@ -1,4 +1,6 @@
+import 'package:AirTours/constants/pages_route.dart';
 import 'package:AirTours/views/Global/ticket.dart';
+import 'package:AirTours/views/Manage_booking/upgrade_card.dart';
 import 'package:flutter/material.dart';
 
 import 'credit_card.dart';
@@ -22,6 +24,8 @@ class Payment extends StatefulWidget {
 }
 
 class _PaymentState extends State<Payment> {
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +40,8 @@ class _PaymentState extends State<Payment> {
             ),
             GestureDetector(
               onTap: () async {
-                bool? result = await Navigator.push(
+                if (widget.paymentFor != 'upgrade') {
+                  await Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => Creditcard(
@@ -44,10 +49,11 @@ class _PaymentState extends State<Payment> {
                             id1: widget.id1,
                             id2: widget.id2,
                             flightClass: widget.flightClass,
-                            tickets: widget.tickets))); //Creditcard
-
-                if (widget.paymentFor == 'upgrade') {
-                  Navigator.pop(context, result);
+                            tickets: widget.tickets))); 
+                }
+                else {
+                  await Navigator.of(context).pushNamedAndRemoveUntil(
+                    upgradeCard, (route) => false);
                 }
               },
               child: Container(

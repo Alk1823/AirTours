@@ -98,7 +98,6 @@ class _ViewBookingsState extends State<ViewBookings> {
                       itemCount: currentBookings.length,
                       itemBuilder: (context, index) {
                         final booking = currentBookings[index];
-
                         return FutureBuilder<List<CloudFlight>>(
                           future: _flightsService.getFlights(
                               booking.departureFlight, booking.returnFlight),
@@ -117,6 +116,7 @@ class _ViewBookingsState extends State<ViewBookings> {
                               return GestureDetector(
                                 onTap: () {
                                   if (booking.returnFlight == 'none') {
+                                    whichBooking = booking.documentId;
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

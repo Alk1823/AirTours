@@ -276,7 +276,7 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         padding: const EdgeInsets.symmetric(
-                          vertical: 16.0,
+                          vertical: 16.0, 
                           horizontal: 24.0,
                         ),
                         shape: RoundedRectangleBorder(

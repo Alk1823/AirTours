@@ -1,7 +1,10 @@
 import 'package:AirTours/constants/booking_constants.dart';
+import 'package:AirTours/constants/flight_constants.dart';
+import 'package:AirTours/constants/ticket_constants.dart';
 import 'package:AirTours/services/cloud/cloud_storage_exceptions.dart';
 import 'package:AirTours/services/cloud/firestore_flight.dart';
 import 'package:AirTours/utilities/show_balance.dart';
+import 'package:AirTours/views/Global/global_var.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../services_auth/firebase_auth_provider.dart';
@@ -10,6 +13,8 @@ class FirebaseCloudStorage {
   final user = FirebaseFirestore.instance.collection('user');
   final admins = FirebaseFirestore.instance.collection('admins');
   final bookings = FirebaseFirestore.instance.collection('bookings');
+  final tickets = FirebaseFirestore.instance.collection('tickets');
+  final flight = FirebaseFirestore.instance.collection('flights');
   final FlightFirestore flights = FlightFirestore();
 
   static final FirebaseCloudStorage _shared =
@@ -146,4 +151,35 @@ class FirebaseCloudStorage {
         throw CouldNotUpdateInformationException();
       }
   }
+
+  Future<double> upgradePrice() async {
+    final doc = bookings.doc(whichBooking);
+    final docSnap = await doc.get();
+    final bookingClass = docSnap.data()![bookingClassField];
+    final depFlight = docSnap.data()![departureFlightField];
+    final doc2 = flight.doc(depFlight); //this document for flight
+    final doc2Snap = await doc2.get();
+    final busFlightPrice = doc2Snap.data()![busPriceField] + 0.0;
+    if (bookingClass != 'business') {
+      final ticket = await tickets.where(
+        bookingReferenceField, isEqualTo: whichBooking
+      ).get();
+      final documents = ticket.docs;
+      int counter = 0;
+      double ticketsPrice = 0;
+      for(final document in documents) {
+        ticketsPrice += document[ticketPriceField]; //what passengers already payed
+        counter += 1;
+      }
+      final totBusPrice = busFlightPrice * counter;
+      print(totBusPrice);
+      final upgradePrice = totBusPrice - ticketsPrice;
+      print(upgradePrice);
+      return upgradePrice + 0.0;
+    } else {
+      return 0; //if already business
+    }
+    
+  }
 }
+
