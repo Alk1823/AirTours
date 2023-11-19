@@ -52,8 +52,7 @@ class _PaymentState extends State<Payment> {
                             tickets: widget.tickets))); 
                 }
                 else {
-                  await Navigator.of(context).pushNamedAndRemoveUntil(
-                    upgradeCard, (route) => false);
+                  await Navigator.of(context).pushNamed(upgradeCard);
                 }
               },
               child: Container(

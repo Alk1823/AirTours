@@ -120,9 +120,9 @@ class _CreditcardState extends State<Creditcard> {
   }
  
 
-  double showTotBookingPrice() {
-    return price;
-  }
+  // double showTotBookingPrice() {
+  //   return price;
+  // }
 
   Future<double> showBalance() async { //different from the balance in DB
     if (notInitialized) {
@@ -163,7 +163,7 @@ class _CreditcardState extends State<Creditcard> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                    Text('Booking Price: ${showTotBookingPrice()}',style: const TextStyle(fontSize: 16),),
+                    Text('Booking Price: ${price}',style: const TextStyle(fontSize: 16),),
                     const SizedBox(width: 10,),
                     FutureBuilder<double>(
                       future: showBalance(),

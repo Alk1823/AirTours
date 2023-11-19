@@ -254,13 +254,13 @@ class _ChargeBalanceState extends State<ChargeBalance> {
                             setState(() {
                               if (formKey.currentState!.validate()) {
                                 toNext();
-                              }
-                            });
-                              await showFeedback(context,'balance successefully added'); 
-                              await Navigator.of(context).pushNamedAndRemoveUntil(
+                                showFeedback(context,'balance successefully added'); 
+                                Navigator.of(context).pushNamedAndRemoveUntil(
                                   bottomRoute,
                                   (route) => false
                                   );
+                              }
+                            });
                           },
                           child: Container(
                               margin: const EdgeInsets.all(5),

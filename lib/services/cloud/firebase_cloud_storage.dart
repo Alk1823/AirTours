@@ -4,6 +4,7 @@ import 'package:AirTours/constants/ticket_constants.dart';
 import 'package:AirTours/services/cloud/cloud_storage_exceptions.dart';
 import 'package:AirTours/services/cloud/firestore_flight.dart';
 import 'package:AirTours/utilities/show_balance.dart';
+import 'package:AirTours/utilities/show_error.dart';
 import 'package:AirTours/views/Global/global_var.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -81,7 +82,12 @@ class FirebaseCloudStorage {
     }
   }
 
- 
+ Future<bool> isAdmin({required String email}) async {
+    final admin = await admins.where(
+      'email' , isEqualTo: email
+    ).get();
+    return admin.docs.isNotEmpty; 
+    } 
 
   Future<bool> isUser({required ownerUserId}) async {
     final docRef = user.doc(ownerUserId);
@@ -101,14 +107,14 @@ class FirebaseCloudStorage {
     }
   }
 
-  Future<void> createNewAdmin(
-      {required String email, required String phoneNum}) async {
-    try {
-      await admins.add({"email": email, "phoneNum": phoneNum});
-    } catch (_) {
-      throw CouldNotCreateAdminException();
-    }
-  }
+  // Future<void> createNewAdmin(
+  //     {required String email, required String phoneNum}) async {
+  //   try {
+  //     await admins.add({"email": email, "phoneNum": phoneNum});
+  //   } catch (_) {
+  //     throw CouldNotCreateAdminException();
+  //   }
+  // }
 
   Future<void> createNewUser(
       {required String ownerUserId,
@@ -180,6 +186,19 @@ class FirebaseCloudStorage {
       return 0; //if already business
     }
     
+  }
+
+  Future<bool> convertUserToAdmin({required String email,required String phoneNum}) async {
+    final users = await user.where(
+      'email' , isEqualTo: email
+    ).get();
+    final documents = users.docs;
+    if (documents.isNotEmpty) {
+      await admins.add({"email": email, "phoneNum": phoneNum});
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 

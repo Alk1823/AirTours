@@ -1,14 +1,9 @@
 import 'package:AirTours/services/cloud/firebase_cloud_storage.dart';
 import 'package:AirTours/utilities/show_balance.dart';
-import 'package:AirTours/views/Global/global_var.dart';
-import 'package:AirTours/views/Global/ticket.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../constants/pages_route.dart';
-import '../../services/cloud/cloud_booking.dart';
-import '../../services/cloud/firestore_booking.dart';
-import '../../services/cloud/firestore_ticket.dart';
 import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/show_error.dart';
 
@@ -30,21 +25,16 @@ class _UpgradeCardState extends State<UpgradeCard> {
   TextEditingController cardName = TextEditingController();
   TextEditingController cvv = TextEditingController();
   TextEditingController expiryDate = TextEditingController();
-  late final TicketFirestore _ticketService;
-  late final BookingFirestore _bookingService;
-  FirebaseCloudStorage f = FirebaseCloudStorage();//test
-  CloudBooking? booking;
-  bool isSucess = false;
+  FirebaseCloudStorage f = FirebaseCloudStorage();
   late double price;
   late double balance;
   bool notInitialized = true;
-  
+  bool notInitialized2 = true;
+
 
   @override
   void initState() {
     super.initState();
-    _bookingService = BookingFirestore();
-    _ticketService = TicketFirestore();
   }
 
 
@@ -55,6 +45,32 @@ class _UpgradeCardState extends State<UpgradeCard> {
       notInitialized = false;
     }
     return balance;
+  }
+
+  Future<double> setPrice() async {
+    if(notInitialized2 == true) {
+      price = await f.upgradePrice();
+      notInitialized2 = false;
+    }
+    return price;
+  }
+
+  Future<void> discountUpgradePrice() async {
+    if (balance >= price) {
+      if (price == 0) {
+        await showErrorDialog(context, "Can't Discount More, Your Upgrade Price is already 0");
+      } else {
+        balance = balance - price;
+        price = 0;
+      }
+    } else {
+      if (balance == 0) {
+        await showErrorDialog(context, 'No Balance Available!');
+      } else {
+        price = price - balance;
+        balance = 0;
+      }
+    }
   }
 
  
@@ -69,7 +85,7 @@ class _UpgradeCardState extends State<UpgradeCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                     FutureBuilder<double>(
-                      future: f.upgradePrice(),
+                      future: setPrice(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return const CircularProgressIndicator();
@@ -308,6 +324,11 @@ class _UpgradeCardState extends State<UpgradeCard> {
                                     );
                               }
                             });
+                            String userId = FirebaseAuthProvider.authService().currentUser!.id;
+                            final docR = user.doc(userId);
+                            await docR.update({
+                              'balance' : balance
+                          });
                           },
                           child: Container(
                               margin: const EdgeInsets.all(5),
@@ -333,7 +354,7 @@ class _UpgradeCardState extends State<UpgradeCard> {
                   ),
                  GestureDetector(
                           onTap: () async {
-                            //await discountBookingPrice();
+                            await discountUpgradePrice();
                             setState(() {});
                           },
                           child: Container(
