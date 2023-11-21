@@ -3,7 +3,6 @@ import 'package:AirTours/services/cloud/firebase_cloud_storage.dart';
 import 'package:AirTours/utilities/show_balance.dart';
 import 'package:AirTours/utilities/show_error.dart';
 import 'package:flutter/material.dart';
-
 import '../../services_auth/firebase_auth_provider.dart';
 
 class ProfileView extends StatefulWidget {
@@ -26,7 +25,6 @@ class _ProfileViewState extends State<ProfileView> {
       ),
       body: SafeArea(
         child: Column(
-          //mainAxisAlignment: MainAxisAlignment.center,
           children: [
            FutureBuilder<double>(
               future: showUserBalance(),
@@ -139,7 +137,6 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
               ),
             ),
-            //const SizedBox(height: 16.0),
             const SizedBox(height: 16.0),
             Padding(
               padding: const EdgeInsets.all(5.0),

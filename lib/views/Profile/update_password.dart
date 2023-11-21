@@ -3,7 +3,6 @@ import 'package:AirTours/services_auth/auth_exceptions.dart';
 import 'package:AirTours/utilities/show_error.dart';
 import 'package:AirTours/utilities/show_feedback.dart';
 import 'package:flutter/material.dart';
-
 import '../../services_auth/firebase_auth_provider.dart';
 
 

@@ -50,14 +50,12 @@ class _UpdateEmailViewState extends State<UpdateEmailView> {
                     try {
                       await FirebaseAuthProvider.authService().updateUserEmail(email: newEmail); 
 
-                       //DB
                       final String currentUser =
                       FirebaseAuthProvider.authService().currentUser!.id;
                      c.updateUser(
                         ownerUserId: currentUser,
                         email: newEmail,
                         phoneNum: "0580647715"
-                        //DB end
 
                       );
                       await showFeedback(context, 'Information Updated'); 

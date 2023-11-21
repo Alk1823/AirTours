@@ -1,8 +1,6 @@
 import 'package:AirTours/constants/pages_route.dart';
 import 'package:AirTours/views/Global/ticket.dart';
-import 'package:AirTours/views/Manage_booking/upgrade_card.dart';
 import 'package:flutter/material.dart';
-
 import 'credit_card.dart';
 
 class Payment extends StatefulWidget {
@@ -72,8 +70,7 @@ class _PaymentState extends State<Payment> {
             ),
             GestureDetector(
               onTap: () {
-                // Navigator.push(context,
-                //     MaterialPageRoute(builder: (context) => Criditcard()));
+              
               },
               child: Container(
                   width: double.infinity,

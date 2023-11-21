@@ -3,7 +3,7 @@ import 'package:AirTours/views/Admin/add_admin.dart';
 import 'package:AirTours/views/Admin/admin.dart';
 import 'package:AirTours/views/Global/bottom_bar.dart';
 import 'package:AirTours/views/Manage_booking/upgrade_card.dart';
-import 'package:AirTours/views/Profile/ProfileView.dart';
+import 'package:AirTours/views/Profile/profile_view.dart';
 import 'package:AirTours/views/Profile/add_balance.dart';
 import 'package:AirTours/views/Profile/login_for_delete_verf.dart';
 import 'package:AirTours/views/Profile/login_for_email_verf.dart';
@@ -56,7 +56,6 @@ class HomePage extends StatelessWidget {
             final user = FirebaseAuthProvider.authService().currentUser;
             if (user != null) {
               if (user.isEmailVerified) {
-                //FirebaseAuthProvider.authService().logOut();
                 return const Bottom();
               } else {
                 return const VerifyEmailView();

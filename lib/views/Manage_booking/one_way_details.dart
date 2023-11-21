@@ -4,7 +4,7 @@ import 'package:AirTours/services/cloud/cloud_booking.dart';
 import 'package:AirTours/services/cloud/cloud_flight.dart';
 import 'package:AirTours/services_auth/firebase_auth_provider.dart';
 import 'package:AirTours/utilities/show_error.dart';
-import 'package:AirTours/views/Global/paymentPage.dart';
+import 'package:AirTours/views/Global/payment_page.dart';
 import 'package:AirTours/views/Manage_booking/tickets_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

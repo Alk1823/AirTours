@@ -1,10 +1,8 @@
-
-
 import 'package:AirTours/constants/pages_route.dart';
+import 'package:AirTours/constants/user_constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import '../../services/cloud/cloud_storage_exceptions.dart';
 import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/show_feedback.dart';
@@ -33,14 +31,12 @@ class _ChargeBalanceState extends State<ChargeBalance> {
   final user = FirebaseFirestore.instance.collection('user');
 
   
-
-  //DB
   Future<void> toNext() async {
     try {
     String userId = FirebaseAuthProvider.authService().currentUser!.id;
     final docRef = user.doc(userId);
     final docSnap = await docRef.get();
-    final currentBalance = docSnap.data()!["balance"];
+    final currentBalance = docSnap.data()![balanceFieldName];
     final toDouble = double.parse(widget.balance);
     final newBalance = toDouble + currentBalance;
     await docRef.update({"balance":newBalance});
@@ -60,7 +56,6 @@ class _ChargeBalanceState extends State<ChargeBalance> {
             key: formKey,
             child: SingleChildScrollView(
               child: Column(
-                //mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                       margin: const EdgeInsets.all(5),
@@ -88,9 +83,6 @@ class _ChargeBalanceState extends State<ChargeBalance> {
                             if (value!.isEmpty) {
                               return "Enter a card number";
                             }
-                            // if (!RegExp(r'^\d{19}$').hasMatch(value)) {
-                            //   return "Enter a valid card number aziz";
-                            // }
                             if (value.length != 22) {
                               return "Enter a valid card number";
                             }

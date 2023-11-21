@@ -1,4 +1,3 @@
-import 'package:AirTours/constants/pages_route.dart';
 import 'package:flutter/material.dart';
 import '../../services/cloud/firebase_cloud_storage.dart';
 import '../../utilities/show_error.dart';
@@ -28,7 +27,7 @@ class _AddAdminState extends State<AddAdmin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('add admin'),
+        title: const Text('Add Admin'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

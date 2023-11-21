@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: unused_field
 
 import 'package:AirTours/constants/pages_route.dart';
 import 'package:AirTours/utilities/show_feedback.dart';
@@ -251,8 +251,6 @@ class _CreateFlightState extends State<CreateFlight> {
                           const SizedBox(
                             height: 10,
                           ),
-
-                          //Time of the flight
                           Row(
                             children: [
                               Expanded(
@@ -325,7 +323,6 @@ class _CreateFlightState extends State<CreateFlight> {
                           const SizedBox(
                             height: 10,
                           ),
-                          //End of time of flight
 
                           Row(
                             children: [
@@ -530,9 +527,7 @@ class _CreateFlightState extends State<CreateFlight> {
                                       await showErrorDialog(context,
                                           'The arrival  must be after the departure ');
                                     }
-                                  } catch (e) {
-                                    print(e);
-                                  }
+                                  } catch (_) {}
                                 }
                               },
                               child: const Text('Add')),

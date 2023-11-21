@@ -32,14 +32,8 @@ class _UpgradeCardState extends State<UpgradeCard> {
   bool notInitialized2 = true;
 
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
-
-
-  Future<double> showBalance() async { //different from the balance in DB
+  Future<double> showBalance() async { 
     if (notInitialized) {
       balance = await showUserBalance();
       notInitialized = false;
@@ -126,7 +120,6 @@ class _UpgradeCardState extends State<UpgradeCard> {
             key: formKey,
             child: SingleChildScrollView(
               child: Column(
-                //mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                       margin: const EdgeInsets.all(5),
@@ -154,9 +147,6 @@ class _UpgradeCardState extends State<UpgradeCard> {
                             if (value!.isEmpty) {
                               return "Enter a card number";
                             }
-                            // if (!RegExp(r'^\d{19}$').hasMatch(value)) {
-                            //   return "Enter a valid card number aziz";
-                            // }
                             if (value.length != 22) {
                               return "Enter a valid card number";
                             }

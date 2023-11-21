@@ -14,7 +14,7 @@ import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/show_error.dart';
 import '../../utilities/show_feedback.dart';
 import '../Global/global_var.dart';
-import '../Global/paymentPage.dart';
+import '../Global/payment_page.dart';
 import '../Global/ticket.dart';
 
 class RoundTripDetails extends StatefulWidget {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../constants/pages_route.dart';
 import '../../services/cloud/firebase_cloud_storage.dart';
 import '../../services_auth/auth_exceptions.dart';
@@ -124,13 +123,12 @@ class _RegisterViewState extends State<RegisterView> {
                     final pass = _password.text;
                     final pass2 = _password2.text;
                     if (pass != pass2) {
-                      showErrorDialog(context, "Password Doesn't Match!");
+                      showErrorDialog(context, "Password doesn't match!");
                     } else {
                       try {
                         await FirebaseAuthProvider.authService()
                             .createUser(email: email, password: pass);
-
-                        //DB
+                        
                         final String userId =
                             FirebaseAuthProvider.authService().currentUser!.id;
                         final String currentEmail =
@@ -140,32 +138,30 @@ class _RegisterViewState extends State<RegisterView> {
                             email: currentEmail,
                             phoneNum: '',
                             balance: 0.0);
-                        //DB end
                         FirebaseAuthProvider.authService().sendEmailVerification();
                         await Navigator.of(context).pushNamed(verficationRoute);
-
                       } on WeakPasswordAuthException {
-                        await showErrorDialog(context, 'Weak Password');
+                        await showErrorDialog(context, 'Weak password');
                       } on EmailAlreadyInUseAuthException {
-                        await showErrorDialog(context, 'Email Already In Use');
+                        await showErrorDialog(context, 'Email already in use');
                       } on InvalidEmailAuthException {
                         await showErrorDialog(
-                            context, 'This Is An Invalid Email');
+                            context, 'This is an invalid email');
                       } on GenericAuthException {
-                        await showErrorDialog(context, 'Failed To Register');
+                        await showErrorDialog(context, 'Failed to register');
                       }
                     }
                   }),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Already Registered?'),
+                  const Text('Already registered?'),
                   TextButton(
                       onPressed: () async {
                         Navigator.of(context).pushNamedAndRemoveUntil(
                             loginRoute, (route) => false);
                       },
-                      child: const Text('Login Here'))
+                      child: const Text('Login here'))
                 ],
               )
             ],

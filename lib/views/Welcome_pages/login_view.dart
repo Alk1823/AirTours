@@ -1,7 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
-
 import '../../constants/pages_route.dart';
 import '../../services/cloud/firebase_cloud_storage.dart';
 import '../../services_auth/auth_exceptions.dart';
@@ -147,7 +145,7 @@ class _LoginViewState extends State<LoginView> {
                   TextButton(
                       onPressed: () async {
                         Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/register/', (route) => false);
+                            registerRoute, (route) => false);
                       },
                       child: const Text("Register Now"))
                 ],

@@ -1,8 +1,6 @@
-
 import 'package:AirTours/utilities/show_error.dart';
 import 'package:AirTours/views/Profile/balance_credit_card.dart';
 import 'package:flutter/material.dart';
-import '../../services/cloud/firebase_cloud_storage.dart';
 
 
 class AddBalance extends StatefulWidget {
@@ -16,7 +14,6 @@ class AddBalance extends StatefulWidget {
 
 class _AddBalanceState extends State<AddBalance> {
   late final TextEditingController _amount;
-  final FirebaseCloudStorage c = FirebaseCloudStorage();
 
   @override
   void initState() {

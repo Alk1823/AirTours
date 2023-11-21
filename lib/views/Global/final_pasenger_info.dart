@@ -1,4 +1,5 @@
-import 'package:AirTours/views/Global/paymentPage.dart';
+import 'package:AirTours/views/Global/credit_card.dart';
+import 'package:AirTours/views/Global/payment_page.dart';
 import 'package:AirTours/views/Global/ticket.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -78,7 +79,7 @@ class _EnterinfoState extends State<Enterinfo> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => Payment(
+            builder: (context) => Creditcard(
                 paymentFor: 'booking',
                 id1: widget.id1,
                 id2: widget.id2,
