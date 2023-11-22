@@ -1,17 +1,19 @@
 import 'package:AirTours/constants/flight_constants.dart';
+import 'package:AirTours/services/cloud/firestore_flight.dart';
+import 'package:AirTours/services/cloud/firestore_ticket.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:AirTours/services/cloud/cloud_booking.dart';
 import 'package:AirTours/constants/booking_constants.dart';
 
-import '../../constants/ticket_constants.dart';
-
 class BookingFirestore {
   final bookings = FirebaseFirestore.instance.collection('bookings');
-  final flights = FirebaseFirestore.instance.collection('flights');
-  final tickets = FirebaseFirestore.instance.collection('tickets');
+  final FlightFirestore flightFirestore;
+  final TicketFirestore ticketFirestore;
 
   static final BookingFirestore _shared = BookingFirestore._sharedInstance();
-  BookingFirestore._sharedInstance();
+  BookingFirestore._sharedInstance()
+      : ticketFirestore = TicketFirestore(),
+        flightFirestore = FlightFirestore();
   factory BookingFirestore() => _shared;
 
   Future<bool> upgradeOneWay({
@@ -21,7 +23,7 @@ class BookingFirestore {
   }) async {
     try {
       bool flag = false;
-      final depFlight = flights.doc(departureFlightId);
+      final depFlight = flightFirestore.flights.doc(departureFlightId);
       final fetchedDep = await depFlight.get();
 
       if (fetchedDep.exists) {
@@ -39,11 +41,13 @@ class BookingFirestore {
           int currentBus1 = fetchedDep.data()![numOfAvabusField];
           double busSeatPrice1 = fetchedDep.data()![busPriceField];
           if (currentBus1 >= numOfPas) {
-            decreaseNumberOfSeats(departureFlightId, numOfPas, 'business');
+            flightFirestore.decreaseNumberOfSeats(
+                departureFlightId, numOfPas, 'Business');
 
-            increaseNumberOfSeats(departureFlightId, numOfPas, 'guest');
+            flightFirestore.increaseNumberOfSeats(
+                departureFlightId, numOfPas, 'Economy');
 
-            double totalPrice = await updateRelatedTickets(
+            double totalPrice = await ticketFirestore.updateRelatedTickets(
               flightId: departureFlightId,
               bookingId: bookingId,
               ticketPrice: busSeatPrice1,
@@ -51,7 +55,7 @@ class BookingFirestore {
 
             bookings.doc(bookingId).update({
               bookingPriceField: totalPrice,
-              bookingClassField: 'business',
+              bookingClassField: 'Business',
             });
 
             flag = true;
@@ -76,9 +80,9 @@ class BookingFirestore {
   }) async {
     try {
       bool flag = false;
-      final depFlight = flights.doc(departureFlightId);
+      final depFlight = flightFirestore.flights.doc(departureFlightId);
       final fetchedDep = await depFlight.get();
-      final retFlight = flights.doc(returnFlightId);
+      final retFlight = flightFirestore.flights.doc(returnFlightId);
       final fetchedRet = await retFlight.get();
 
       if (fetchedDep.exists) {
@@ -94,23 +98,27 @@ class BookingFirestore {
             double busSeatPrice1 = fetchedDep.data()![busPriceField];
             double busSeatPrice2 = fetchedRet.data()![busPriceField];
             if (currentBus1 >= numOfPas && currentBus2 >= numOfPas) {
-              decreaseNumberOfSeats(departureFlightId, numOfPas, 'business');
-              decreaseNumberOfSeats(returnFlightId, numOfPas, 'business');
-              increaseNumberOfSeats(departureFlightId, numOfPas, 'guest');
-              increaseNumberOfSeats(returnFlightId, numOfPas, 'guest');
-              double totalPrice1 = await updateRelatedTickets(
+              flightFirestore.decreaseNumberOfSeats(
+                  departureFlightId, numOfPas, 'Business');
+              flightFirestore.decreaseNumberOfSeats(
+                  returnFlightId, numOfPas, 'Business');
+              flightFirestore.increaseNumberOfSeats(
+                  departureFlightId, numOfPas, 'Economy');
+              flightFirestore.increaseNumberOfSeats(
+                  returnFlightId, numOfPas, 'Economy');
+              double totalPrice1 = await ticketFirestore.updateRelatedTickets(
                   flightId: departureFlightId,
                   bookingId: bookingId,
                   ticketPrice: busSeatPrice1);
-              double totalPrice2 = await updateRelatedTickets(
+              double totalPrice2 = await ticketFirestore.updateRelatedTickets(
                   flightId: returnFlightId,
                   bookingId: bookingId,
                   ticketPrice: busSeatPrice2);
               double totalPrice = totalPrice1 + totalPrice2;
-              print(totalPrice);
+
               bookings.doc(bookingId).update({
                 bookingPriceField: totalPrice,
-                bookingClassField: 'business'
+                bookingClassField: 'Business'
               });
 
               flag = true;
@@ -123,7 +131,6 @@ class BookingFirestore {
       }
       return flag;
     } catch (e) {
-      print('Error occurred w seat availability: $e');
       return false;
     }
   }
@@ -139,7 +146,7 @@ class BookingFirestore {
       bool flag = false;
       DateTime now = DateTime.now();
       final tmpBooking = bookings.doc(bookingId);
-      final tempFlight = flights.doc(flightId1);
+      final tempFlight = flightFirestore.flights.doc(flightId1);
       final fetchedFlight = await tempFlight.get();
       DateTime flightDate = fetchedFlight.data()![depDateField].toDate();
       DateTime flightTime = fetchedFlight.data()![depTimeField].toDate();
@@ -152,13 +159,15 @@ class BookingFirestore {
 
           if (timeDifference.inHours >= 24) {
             await tmpBooking.delete();
-            increaseNumberOfSeats(flightId1, numOfPas, flightClass);
+            flightFirestore.increaseNumberOfSeats(
+                flightId1, numOfPas, flightClass);
 
             flag = true;
-            await deleteRelatedTickets(bookingId: bookingId);
+            await ticketFirestore.deleteRelatedTickets(bookingId: bookingId);
             //roundtrip
             if (flightId2 != 'none') {
-              increaseNumberOfSeats(flightId2, numOfPas, flightClass);
+              flightFirestore.increaseNumberOfSeats(
+                  flightId2, numOfPas, flightClass);
             }
           }
         }
@@ -197,9 +206,11 @@ class BookingFirestore {
       numOfSeatsField: numOfSeats,
       bookingTimeField: bookingTimestamp
     });
-    decreaseNumberOfSeats(departureFlight, numOfSeats, bookingClass);
+    flightFirestore.decreaseNumberOfSeats(
+        departureFlight, numOfSeats, bookingClass);
     if (returnFlight != 'none') {
-      decreaseNumberOfSeats(returnFlight, numOfSeats, bookingClass);
+      flightFirestore.decreaseNumberOfSeats(
+          returnFlight, numOfSeats, bookingClass);
     }
 
     final fetchedBooking = await document.get();
@@ -212,102 +223,5 @@ class BookingFirestore {
         bookingUserId: bookingUserId,
         numOfSeats: numOfSeats,
         bookingTime: bookingTimestamp);
-  }
-
-  Future<void> decreaseNumberOfSeats(
-      String flightId, int numOfSeats, String flightClass) async {
-    try {
-      final tempFlight = flights.doc(flightId);
-      final fetchedFlight = await tempFlight.get();
-
-      if (flightClass == 'business') {
-        int currentSeats = fetchedFlight.data()![numOfAvabusField];
-        if (currentSeats > 0) {
-          int newSeats = currentSeats - numOfSeats;
-          tempFlight.update({numOfAvabusField: newSeats});
-        }
-      } else {
-        int currentSeats = fetchedFlight.data()![numOfAvaGueField];
-        if (currentSeats > 0) {
-          int newSeats = currentSeats - numOfSeats;
-          await tempFlight.update({numOfAvaGueField: newSeats});
-        }
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> increaseNumberOfSeats(
-      String flightId, int numOfSeats, String flightClass) async {
-    try {
-      final tempFlight = flights.doc(flightId);
-      final fetchedFlight = await tempFlight.get();
-
-      if (flightClass == 'business') {
-        int currentSeats = fetchedFlight.data()![numOfAvabusField];
-        if (currentSeats > 0) {
-          int newSeats = currentSeats + numOfSeats;
-          tempFlight.update({numOfAvabusField: newSeats});
-        }
-      } else {
-        int currentSeats = fetchedFlight.data()![numOfAvaGueField];
-        if (currentSeats > 0) {
-          int newSeats = currentSeats + numOfSeats;
-          await tempFlight.update({numOfAvaGueField: newSeats});
-        }
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> deleteRelatedTickets({required String bookingId}) async {
-    try {
-      final allTickets = await tickets
-          .where(bookingReferenceField, isEqualTo: bookingId)
-          .get();
-
-      final List<QueryDocumentSnapshot> documents = allTickets.docs;
-
-      for (QueryDocumentSnapshot document in documents) {
-        await document.reference.delete();
-      }
-    } catch (e) {
-      print('Error deleting tickets: $e');
-    }
-  }
-
-  Future<double> updateRelatedTickets({
-    required String bookingId,
-    required String flightId,
-    required double ticketPrice,
-  }) async {
-    double totalbookingPrice = 0;
-    try {
-      final allTickets = await tickets
-          .where(bookingReferenceField, isEqualTo: bookingId)
-          .where(flightRefField, isEqualTo: flightId)
-          .get();
-
-      final List<QueryDocumentSnapshot> documents = allTickets.docs;
-
-      for (QueryDocumentSnapshot document in documents) {
-        int numOfBaggage = document[bagQuantityField];
-
-        double updatedTicketPrice =
-            ticketPrice + (numOfBaggage.toDouble() * 251);
-
-        totalbookingPrice = totalbookingPrice + updatedTicketPrice;
-
-        await document.reference.update({
-          ticketClassField: 'business',
-          ticketPriceField: updatedTicketPrice,
-        });
-      }
-    } catch (e) {
-      print('Error updating tickets: $e');
-    }
-    return totalbookingPrice;
   }
 }

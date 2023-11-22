@@ -123,9 +123,9 @@ class _RoundTripSearch2State extends State<RoundTripSearch2> {
                       final Iterable<CloudFlight> sortedFlights =
                           _flightsService.sortFlightsByDuration(allFlights);
                       final flight = sortedFlights.elementAt(index);
-                      double flightText = widget.flightClass == 'business'
+                      double flightText = widget.flightClass == 'Business'
                           ? flight.busPrice
-                          : flight.guestPrice;
+                          : flight.ecoPrice;
                       DateTime flightDate = widget.flight1.arrDate.toDate();
                       DateTime flightTime = widget.flight1.arrTime.toDate();
                       DateTime totalTime1 = DateTime(

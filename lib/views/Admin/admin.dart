@@ -1,5 +1,11 @@
-// ignore_for_file: unused_field
-
+// ignore_for_file: use_build_context_synchronously
+// Container(
+//               margin: const EdgeInsets.all(5),
+//               width: double.infinity,
+//               decoration: BoxDecoration(boxShadow: const [
+//                 BoxShadow(blurRadius: 2, offset: Offset(0, 0))
+//               ], borderRadius: BorderRadius.circular(20), color: Colors.white),
+//               child:
 import 'package:AirTours/constants/pages_route.dart';
 import 'package:AirTours/utilities/show_feedback.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +15,8 @@ import '../../services/cloud/cloud_flight.dart';
 import '../../services/cloud/firestore_flight.dart';
 import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/show_error.dart';
+import '../Global/global_var.dart';
+import '../Global/show_city_name_search.dart';
 
 class CreateFlight extends StatefulWidget {
   const CreateFlight({super.key});
@@ -38,6 +46,8 @@ class _CreateFlightState extends State<CreateFlight> {
   CloudFlight? _flight;
   late final FlightFirestore _flightsService;
   final formKey = GlobalKey<FormState>();
+  String? selectedCity1;
+  String? selectedCity2;
 
   @override
   void initState() {
@@ -103,279 +113,451 @@ class _CreateFlightState extends State<CreateFlight> {
     return newFlight;
   }
 
+  void _navigateToCitySelectionPage(BuildContext context, int num) async {
+    final city = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const FromSearch(fromOrTo: 1)),
+    );
+
+    if (city != null) {
+      setState(() {
+        if (num == 1) {
+          selectedCity1 = city;
+        }
+        if (num == 2) {
+          selectedCity2 = city;
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: const Text(
-          "Admin",
-          textAlign: TextAlign.center,
-        )),
-        body: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: SingleChildScrollView(
-            child: Container(
-              margin: const EdgeInsets.all(5),
-              width: double.infinity,
-              decoration: BoxDecoration(boxShadow: const [
-                BoxShadow(blurRadius: 2, offset: Offset(0, 0))
-              ], borderRadius: BorderRadius.circular(20), color: Colors.white),
+          title: const Text(
+            "Admin",
+          ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(addAdminRoute);
+              },
+              icon: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+            )
+          ],
+          leading: IconButton(
+            icon: const Icon(
+              Icons.power_settings_new_rounded,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              FirebaseAuthProvider.authService().logOut();
+              Navigator.of(context).pushNamed(loginRoute);
+            },
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: SingleChildScrollView(
               child: Padding(
-                  padding: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: Form(
                     key: formKey,
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: TextFormField(
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return "Required Field";
-                                        }
-
-                                        if (!RegExp(r'^[a-z A-Z]+$')
-                                            .hasMatch(value)) {
-                                          return 'Please Enter a city';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                      controller: from,
-                                      keyboardType: TextInputType.text,
-                                      textAlign: TextAlign.center,
-                                      decoration: const InputDecoration(
-                                        icon:
-                                            Icon(Icons.flight_takeoff_rounded),
-                                        hintText: "From",
-                                      ))),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                  child: TextFormField(
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return "Required Field";
-                                        }
-
-                                        if (!RegExp(r'^[a-z A-Z]+$')
-                                            .hasMatch(value)) {
-                                          return 'Please Enter a city';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                      controller: to,
-                                      textAlign: TextAlign.center,
-                                      decoration: const InputDecoration(
-                                        icon: Icon(Icons.flight_land),
-                                        hintText: "To",
-                                      )))
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: TextFormField(
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Required Field";
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                                controller: depDate,
-                                readOnly: true,
-                                textAlign: TextAlign.center,
-                                decoration: const InputDecoration(
-                                  icon: Icon(Icons.calendar_month),
-                                  hintText: "Departure Date",
+                          Container(
+                            margin: const EdgeInsets.all(5),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                                boxShadow: const [
+                                  BoxShadow(blurRadius: 2, offset: Offset(0, 0))
+                                ],
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white),
+                            child: GestureDetector(
+                              onTap: () {
+                                _navigateToCitySelectionPage(context, 1);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text("From"),
+                                    const SizedBox(
+                                      height: 3,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          selectedCity1 != null
+                                              ? '$selectedCity1'
+                                              : 'Select city',
+                                        ),
+                                        const Text(">")
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    )
+                                  ],
                                 ),
-                                onTap: () async {
-                                  DateTime? temp = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime.now(),
-                                    lastDate: DateTime(2100),
-                                  );
-
-                                  if (temp != null) {
-                                    setState(() {
-                                      depDate.text =
-                                          DateFormat('yyyy-MM-dd').format(temp);
-                                      selectedDepDate = temp;
-                                    });
-                                  }
-                                },
-                              )),
-                              const SizedBox(
-                                width: 10,
                               ),
-                              Expanded(
-                                  child: TextFormField(
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return "Required Field";
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                      controller: arrDate,
-                                      readOnly: true,
-                                      textAlign: TextAlign.center,
-                                      decoration: const InputDecoration(
-                                        icon: Icon(Icons.calendar_month),
-                                        hintText: "Arrival Date",
-                                      ),
-                                      onTap: () async {
-                                        selectedArrDate = await showDatePicker(
-                                          context: context,
-                                          initialDate: selectedDepDate!,
-                                          firstDate: selectedDepDate!,
-                                          lastDate: DateTime(2100),
-                                        );
-
-                                        if (selectedArrDate != null) {
-                                          setState(() {
-                                            arrDate.text =
-                                                DateFormat('yyyy-MM-dd')
-                                                    .format(selectedArrDate!);
-                                          });
-                                        }
-                                      }))
-                            ],
+                            ),
                           ),
                           const SizedBox(
-                            height: 10,
+                            width: 10,
                           ),
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: TextFormField(
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Required Field";
-                                  } else {
-                                    return null;
-                                  }
+                          Container(
+                              margin: const EdgeInsets.all(5),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        blurRadius: 2, offset: Offset(0, 0))
+                                  ],
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.white),
+                              child: GestureDetector(
+                                onTap: () {
+                                  _navigateToCitySelectionPage(context, 2);
                                 },
-                                controller: depTime,
-                                readOnly: true,
-                                textAlign: TextAlign.center,
-                                decoration: const InputDecoration(
-                                  icon: Icon(Icons.timer),
-                                  hintText: "Departure Time",
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text("To"),
+                                      const SizedBox(
+                                        height: 3,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            selectedCity2 != null
+                                                ? '$selectedCity2'
+                                                : 'Select city',
+                                          ),
+                                          const Text(">")
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      )
+                                    ],
+                                  ),
                                 ),
-                                onTap: () async {
-                                  final TimeOfDay? pickedTime =
-                                      await showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                  );
-
-                                  if (pickedTime != null) {
-                                    setState(() {
-                                      depTime.text = pickedTime.format(context);
-                                      selectedDepTime = pickedTime;
-                                    });
-                                  }
-                                },
                               )),
+                          Container(
+                              margin: const EdgeInsets.all(5),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        blurRadius: 2, offset: Offset(0, 0))
+                                  ],
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.white),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 8, bottom: 1),
+                                child: TextFormField(
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return "Required Field";
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                  controller: depDate,
+                                  readOnly: true,
+                                  textAlign: TextAlign.start,
+                                  decoration: const InputDecoration(
+                                      hintText: "Departure Date",
+                                      suffixIcon: Icon(Icons.calendar_month),
+                                      border: InputBorder.none,
+                                      contentPadding:
+                                          EdgeInsets.symmetric(vertical: 20)),
+                                  onTap: () async {
+                                    DateTime? temp = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime.now(),
+                                      lastDate: DateTime(2100),
+                                    );
+
+                                    if (temp != null) {
+                                      setState(() {
+                                        depDate.text = DateFormat('yyyy-MM-dd')
+                                            .format(temp);
+                                        selectedDepDate = temp;
+                                      });
+                                    }
+                                  },
+                                ),
+                              )),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                              margin: const EdgeInsets.all(5),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        blurRadius: 2, offset: Offset(0, 0))
+                                  ],
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.white),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 8, bottom: 1),
+                                child: TextFormField(
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Required Field";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                    controller: arrDate,
+                                    readOnly: true,
+                                    textAlign: TextAlign.start,
+                                    decoration: const InputDecoration(
+                                      hintText: "Arrival Date",
+                                      suffixIcon: Icon(Icons.calendar_month),
+                                      border: InputBorder.none,
+                                      contentPadding:
+                                          EdgeInsets.symmetric(vertical: 20),
+                                    ),
+                                    onTap: () async {
+                                      selectedArrDate = await showDatePicker(
+                                        context: context,
+                                        initialDate: selectedDepDate!,
+                                        firstDate: selectedDepDate!,
+                                        lastDate: DateTime(2100),
+                                      );
+
+                                      if (selectedArrDate != null) {
+                                        setState(() {
+                                          arrDate.text =
+                                              DateFormat('yyyy-MM-dd')
+                                                  .format(selectedArrDate!);
+                                        });
+                                      }
+                                    }),
+                              )),
+                          const SizedBox(
+                            height: 2,
+                          ),
+
+                          //Time of the flight
+                          Container(
+                              margin: const EdgeInsets.all(5),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        blurRadius: 2, offset: Offset(0, 0))
+                                  ],
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.white),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 8, bottom: 1),
+                                child: TextFormField(
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return "Required Field";
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                  controller: depTime,
+                                  readOnly: true,
+                                  textAlign: TextAlign.start,
+                                  decoration: const InputDecoration(
+                                    hintText: "Departure Time",
+                                    suffixIcon: Icon(Icons.timer),
+                                    border: InputBorder.none,
+                                    contentPadding:
+                                        EdgeInsets.symmetric(vertical: 20),
+                                  ),
+                                  onTap: () async {
+                                    final TimeOfDay? pickedTime =
+                                        await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.now(),
+                                    );
+
+                                    if (pickedTime != null) {
+                                      setState(() {
+                                        depTime.text =
+                                            pickedTime.format(context);
+                                        selectedDepTime = pickedTime;
+                                      });
+                                    }
+                                  },
+                                ),
+                              )),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                              margin: const EdgeInsets.all(5),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        blurRadius: 2, offset: Offset(0, 0))
+                                  ],
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.white),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 8, bottom: 1),
+                                child: TextFormField(
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Required Field";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                    controller: arrTime,
+                                    readOnly: true,
+                                    textAlign: TextAlign.start,
+                                    decoration: const InputDecoration(
+                                      hintText: "Arrival Time",
+                                      suffixIcon: Icon(Icons.timer),
+                                      border: InputBorder.none,
+                                      contentPadding:
+                                          EdgeInsets.symmetric(vertical: 20),
+                                    ),
+                                    onTap: () async {
+                                      final TimeOfDay? selectTime =
+                                          await showTimePicker(
+                                        context: context,
+                                        initialTime: TimeOfDay.now(),
+                                      );
+
+                                      if (selectTime != null) {
+                                        setState(() {
+                                          arrTime.text =
+                                              selectTime.format(context);
+                                          selectedArrTime = selectTime;
+                                        });
+                                      }
+                                    }),
+                              )),
+
+                          //End of time of flight
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Container(
+                                    margin: const EdgeInsets.all(5),
+                                    //width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        boxShadow: const [
+                                          BoxShadow(
+                                              blurRadius: 2,
+                                              offset: Offset(0, 0))
+                                        ],
+                                        borderRadius: BorderRadius.circular(15),
+                                        color: Colors.white),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8,
+                                          right: 8,
+                                          bottom: 12,
+                                          top: 8),
+                                      child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Text("From Airport"),
+                                            const SizedBox(
+                                              height: 3,
+                                            ),
+                                            Text(
+                                              selectedCity1 != null
+                                                  ? '${shortCutFlightName[selectedCity1]}'
+                                                  : '',
+                                            ),
+                                          ]),
+                                    )),
+                              ),
                               const SizedBox(
                                 width: 10,
                               ),
                               Expanded(
-                                  child: TextFormField(
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return "Required Field";
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                      controller: arrTime,
-                                      readOnly: true,
-                                      textAlign: TextAlign.center,
-                                      decoration: const InputDecoration(
-                                        icon: Icon(Icons.timer),
-                                        hintText: "Arrival Time",
-                                      ),
-                                      onTap: () async {
-                                        final TimeOfDay? selectTime =
-                                            await showTimePicker(
-                                          context: context,
-                                          initialTime: TimeOfDay.now(),
-                                        );
+                                child: Container(
+                                    margin: const EdgeInsets.all(5),
+                                    //width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        boxShadow: const [
+                                          BoxShadow(
+                                              blurRadius: 2,
+                                              offset: Offset(0, 0))
+                                        ],
+                                        borderRadius: BorderRadius.circular(13),
+                                        color: Colors.white),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 8,
+                                          right: 8,
+                                          bottom: 12,
+                                          top: 8),
+                                      child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            //const Icon(Icons.airplanemode_active),
 
-                                        if (selectTime != null) {
-                                          setState(() {
-                                            arrTime.text =
-                                                selectTime.format(context);
-                                            selectedArrTime = selectTime;
-                                          });
-                                        }
-                                      }))
+                                            const Text("To Airport"),
+                                            Text(
+                                              selectedCity2 != null
+                                                  ? '${shortCutFlightName[selectedCity2]}'
+                                                  : '',
+                                            ),
+                                          ]),
+                                    )),
+                              ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          const SizedBox(width: 10),
 
                           Row(
                             children: [
                               Expanded(
-                                  child: TextFormField(
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return "Required Field";
-                                        }
-
-                                        if (!RegExp(r'^[a-z A-Z]+$')
-                                            .hasMatch(value)) {
-                                          return 'Incorrect Airport';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                      controller: fromAir,
-                                      textAlign: TextAlign.center,
-                                      decoration: const InputDecoration(
-                                        icon: Icon(Icons.connecting_airports),
-                                        hintText: "From Airport",
-                                      ))),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                  child: TextFormField(
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return "Required Field";
-                                        }
-
-                                        if (!RegExp(r'^[a-z A-Z]+$')
-                                            .hasMatch(value)) {
-                                          return 'Incorrect Airport';
-                                        } else {
-                                          return null;
-                                        }
-                                      },
-                                      controller: toAir,
-                                      textAlign: TextAlign.center,
-                                      decoration: const InputDecoration(
-                                        icon:
-                                            Icon(Icons.airplanemode_on_rounded),
-                                        hintText: "To Airport",
-                                      )))
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
+                                  child: Container(
+                                margin: const EdgeInsets.all(5),
+                                //width: double.infinity,
+                                decoration: BoxDecoration(
+                                    boxShadow: const [
+                                      BoxShadow(
+                                          blurRadius: 2, offset: Offset(0, 0))
+                                    ],
+                                    borderRadius: BorderRadius.circular(13),
+                                    color: Colors.white),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 8, bottom: 0),
                                   child: TextFormField(
                                       validator: (value) {
                                         if (value!.isEmpty) {
@@ -390,15 +572,33 @@ class _CreateFlightState extends State<CreateFlight> {
                                       },
                                       controller: numOfGuest,
                                       keyboardType: TextInputType.number,
-                                      textAlign: TextAlign.center,
+                                      textAlign: TextAlign.start,
                                       decoration: const InputDecoration(
-                                        icon: Icon(Icons.man_4),
                                         hintText: "Guest Seats",
-                                      ))),
+                                        suffixIcon: Icon(Icons.man_4),
+                                        border: InputBorder.none,
+                                        contentPadding:
+                                            EdgeInsets.symmetric(vertical: 20),
+                                      )),
+                                ),
+                              )),
                               const SizedBox(
                                 width: 10,
                               ),
                               Expanded(
+                                  child: Container(
+                                margin: const EdgeInsets.all(5),
+                                //width: double.infinity,
+                                decoration: BoxDecoration(
+                                    boxShadow: const [
+                                      BoxShadow(
+                                          blurRadius: 2, offset: Offset(0, 0))
+                                    ],
+                                    borderRadius: BorderRadius.circular(13),
+                                    color: Colors.white),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 8, bottom: 0),
                                   child: TextFormField(
                                       validator: (value) {
                                         if (value!.isEmpty) {
@@ -412,20 +612,34 @@ class _CreateFlightState extends State<CreateFlight> {
                                         }
                                       },
                                       controller: numOfBusiness,
-                                      textAlign: TextAlign.center,
+                                      textAlign: TextAlign.start,
                                       decoration: const InputDecoration(
-                                        icon: Icon(Icons.man),
                                         hintText: "Business Seats",
-                                      )))
+                                        suffixIcon: Icon(Icons.man),
+                                        border: InputBorder.none,
+                                        contentPadding:
+                                            EdgeInsets.symmetric(vertical: 20),
+                                      )),
+                                ),
+                              ))
                             ],
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-
                           Row(
                             children: [
                               Expanded(
+                                  child: Container(
+                                margin: const EdgeInsets.all(5),
+                                //width: double.infinity,
+                                decoration: BoxDecoration(
+                                    boxShadow: const [
+                                      BoxShadow(
+                                          blurRadius: 2, offset: Offset(0, 0))
+                                    ],
+                                    borderRadius: BorderRadius.circular(13),
+                                    color: Colors.white),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 8, bottom: 0, right: 8),
                                   child: TextFormField(
                                       validator: (value) {
                                         if (value!.isEmpty) {
@@ -441,38 +655,63 @@ class _CreateFlightState extends State<CreateFlight> {
                                       },
                                       controller: guestPrice,
                                       keyboardType: TextInputType.number,
-                                      textAlign: TextAlign.center,
+                                      textAlign: TextAlign.start,
                                       decoration: const InputDecoration(
-                                        icon: Icon(Icons.attach_money),
                                         hintText: "Guset Price",
-                                      ))),
+                                        suffixText: "SAR",
+                                        border: InputBorder.none,
+                                        contentPadding:
+                                            EdgeInsets.symmetric(vertical: 20),
+                                      )),
+                                ),
+                              )),
                               const SizedBox(
                                 width: 10,
                               ),
                               Expanded(
+                                  child: Container(
+                                margin: const EdgeInsets.all(5),
+                                //width: double.infinity,
+                                decoration: BoxDecoration(
+                                    boxShadow: const [
+                                      BoxShadow(
+                                          blurRadius: 2, offset: Offset(0, 0))
+                                    ],
+                                    borderRadius: BorderRadius.circular(13),
+                                    color: Colors.white),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 8, bottom: 0, right: 8),
                                   child: TextFormField(
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Required Field";
-                                  }
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Required Field";
+                                      }
 
-                                  if (!RegExp(r'^\d+(\.\d+)?$')
-                                      .hasMatch(value)) {
-                                    return 'Please a price';
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                                controller: businessPrice,
-                                keyboardType: TextInputType.number,
-                                textAlign: TextAlign.center,
-                                decoration: const InputDecoration(
-                                  icon: Icon(Icons.attach_money),
-                                  hintText: "Business Price",
+                                      if (!RegExp(r'^\d+(\.\d+)?$')
+                                          .hasMatch(value)) {
+                                        return 'Please a price';
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                    controller: businessPrice,
+                                    keyboardType: TextInputType.number,
+                                    textAlign: TextAlign.start,
+                                    decoration: const InputDecoration(
+                                      hintText: "Business Price",
+                                      suffixText: "SAR",
+                                      border: InputBorder.none,
+                                      contentPadding:
+                                          EdgeInsets.symmetric(vertical: 20),
+                                    ),
+                                  ),
                                 ),
                               ))
                             ],
                           ),
+
+                          //
                           TextButton(
                               onPressed: () async {
                                 if (formKey.currentState!.validate()) {
@@ -492,37 +731,42 @@ class _CreateFlightState extends State<CreateFlight> {
                                         selectedArrTime.minute);
 
                                     if (departur.isBefore(arriv)) {
-                                      DateTime dateTimeDep = DateTime(
-                                          1980,
-                                          1,
-                                          1,
-                                          selectedDepTime.hour,
-                                          selectedDepTime.minute);
+                                      if (departur.isAfter(DateTime.now())) {
+                                        DateTime dateTimeDep = DateTime(
+                                            1980,
+                                            1,
+                                            1,
+                                            selectedDepTime.hour,
+                                            selectedDepTime.minute);
 
-                                      DateTime dateTimeArr = DateTime(
-                                          1980,
-                                          1,
-                                          1,
-                                          selectedArrTime.hour,
-                                          selectedArrTime.minute);
+                                        DateTime dateTimeArr = DateTime(
+                                            1980,
+                                            1,
+                                            1,
+                                            selectedArrTime.hour,
+                                            selectedArrTime.minute);
 
-                                      createFlight(
-                                          fromCity: from.text,
-                                          toCity: to.text,
-                                          fromAirport: fromAir.text,
-                                          toAirport: toAir.text,
-                                          numOfBusiness: numOfBusiness.text,
-                                          numOfGuest: numOfGuest.text,
-                                          guestPrice: guestPrice.text,
-                                          busPrice: businessPrice.text,
-                                          depDate: selectedDepDate,
-                                          arrDate: selectedArrDate,
-                                          arrTime: dateTimeArr,
-                                          depTime: dateTimeDep);
+                                        createFlight(
+                                            fromCity: selectedCity1,
+                                            toCity: selectedCity2,
+                                            fromAirport: fromAir.text,
+                                            toAirport: toAir.text,
+                                            numOfBusiness: numOfBusiness.text,
+                                            numOfGuest: numOfGuest.text,
+                                            guestPrice: guestPrice.text,
+                                            busPrice: businessPrice.text,
+                                            depDate: selectedDepDate,
+                                            arrDate: selectedArrDate,
+                                            arrTime: dateTimeArr,
+                                            depTime: dateTimeDep);
 
-                                      clearAllFields();
-                                      await showFeedback(
-                                          context, 'Flight Added');
+                                        clearAllFields();
+                                        await showFeedback(
+                                            context, 'Flight Added');
+                                      } else {
+                                        await showErrorDialog(context,
+                                            'The departure must be after the current time.');
+                                      }
                                     } else {
                                       await showErrorDialog(context,
                                           'The arrival  must be after the departure ');
@@ -530,32 +774,25 @@ class _CreateFlightState extends State<CreateFlight> {
                                   } catch (_) {}
                                 }
                               },
-                              child: const Text('Add')),
-                          TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pushNamed(addAdminRoute);
-                              },
-                              child: const Text('Add Admin')),
-                          ElevatedButton(
-                            onPressed: () {
-                              FirebaseAuthProvider.authService().logOut();
-                              Navigator.of(context).pushNamed(loginRoute);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 12.0),
-                              child: Text(
-                                'Sign Out',
-                                style: TextStyle(fontSize: 18.0),
-                              ),
-                            ),
-                          ),
+                              child: Container(
+                                  margin: const EdgeInsets.all(5),
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      boxShadow: const [
+                                        BoxShadow(
+                                            blurRadius: 2, offset: Offset(0, 0))
+                                      ],
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.green[500]),
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(15.0),
+                                    child: Text(
+                                      "Create flight",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 18),
+                                    ),
+                                  ))),
                         ],
                       ),
                     ),

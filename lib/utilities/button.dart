@@ -11,9 +11,10 @@ class MyButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Material(
-        borderRadius: BorderRadius.circular(100),
+        borderRadius:
+            BorderRadius.circular(20), //change borderRadius circular to 20
         elevation: 10,
-        color: Colors.deepPurple,
+        color: const Color.fromARGB(255, 13, 213, 130), //change color to green
         child: MaterialButton(
             onPressed: onPressed,
             height: 45,

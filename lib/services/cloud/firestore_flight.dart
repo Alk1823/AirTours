@@ -34,7 +34,7 @@ class FlightFirestore {
       final allFlights = flights
           .where(fromField, isEqualTo: from)
           .where(toField, isEqualTo: to)
-          .where(numOfAvaGueField, isGreaterThanOrEqualTo: numOfPas)
+          .where(numOfAvaEcoField, isGreaterThanOrEqualTo: numOfPas)
           .where(depDateField, isEqualTo: depDateStamp)
           .snapshots()
           .map((event) =>
@@ -63,7 +63,7 @@ class FlightFirestore {
       fromAirField: fromAirport,
       toAirField: toAirport,
       numOfbusField: numOfBusiness,
-      numOfGueField: numOfGuest,
+      numOfEcoField: numOfGuest,
       guePriceField: guestPrice,
       busPriceField: busPrice,
       depDateField: depDate,
@@ -71,7 +71,7 @@ class FlightFirestore {
       arrTimeField: arrTime,
       depTimeField: depTime,
       numOfAvabusField: numOfBusiness,
-      numOfAvaGueField: numOfGuest,
+      numOfAvaEcoField: numOfGuest,
     });
     final fetchedFlight = await document.get();
     return CloudFlight(
@@ -81,15 +81,15 @@ class FlightFirestore {
         fromAirport: fromAirport,
         toAirport: toAirport,
         numOfBusiness: numOfBusiness,
-        numOfGuest: numOfGuest,
-        guestPrice: guestPrice,
+        numOfEco: numOfGuest,
+        ecoPrice: guestPrice,
         busPrice: busPrice,
         depDate: depDate,
         arrDate: arrDate,
         arrTime: arrTime,
         depTime: depTime,
         numOfAvaBusiness: numOfBusiness,
-        numOfAvaGuest: numOfBusiness);
+        numOfAvaEco: numOfBusiness);
   }
 
   String formatTime(Timestamp timestamp) {
@@ -111,15 +111,15 @@ class FlightFirestore {
         fromAirport: fetchedFlight.data()![fromAirField],
         toAirport: fetchedFlight.data()![toAirField],
         numOfBusiness: fetchedFlight.data()![numOfbusField],
-        numOfGuest: fetchedFlight.data()![numOfGueField],
-        guestPrice: fetchedFlight.data()![guePriceField],
+        numOfEco: fetchedFlight.data()![numOfEcoField],
+        ecoPrice: fetchedFlight.data()![guePriceField],
         busPrice: fetchedFlight.data()![busPriceField],
         depDate: fetchedFlight.data()![depDateField],
         arrDate: fetchedFlight.data()![arrDateField],
         arrTime: fetchedFlight.data()![arrTimeField],
         depTime: fetchedFlight.data()![depTimeField],
         numOfAvaBusiness: fetchedFlight.data()![numOfAvabusField],
-        numOfAvaGuest: fetchedFlight.data()![numOfAvaGueField]);
+        numOfAvaEco: fetchedFlight.data()![numOfAvaEcoField]);
     currFlights.add(depFlight);
 
     if (returnId != 'none') {
@@ -132,15 +132,15 @@ class FlightFirestore {
           fromAirport: fetchedFlight.data()![fromAirField],
           toAirport: fetchedFlight.data()![toAirField],
           numOfBusiness: fetchedFlight.data()![numOfbusField],
-          numOfGuest: fetchedFlight.data()![numOfGueField],
-          guestPrice: fetchedFlight.data()![guePriceField],
+          numOfEco: fetchedFlight.data()![numOfEcoField],
+          ecoPrice: fetchedFlight.data()![guePriceField],
           busPrice: fetchedFlight.data()![busPriceField],
           depDate: fetchedFlight.data()![depDateField],
           arrDate: fetchedFlight.data()![arrDateField],
           arrTime: fetchedFlight.data()![arrTimeField],
           depTime: fetchedFlight.data()![depTimeField],
           numOfAvaBusiness: fetchedFlight.data()![numOfAvabusField],
-          numOfAvaGuest: fetchedFlight.data()![numOfAvaGueField]);
+          numOfAvaEco: fetchedFlight.data()![numOfAvaEcoField]);
       currFlights.add(retFlight);
     }
     return currFlights;
@@ -174,6 +174,7 @@ class FlightFirestore {
         DateTime flightTime = fetchedFlight.data()![arrTimeField].toDate();
         DateTime totalTime = DateTime(flightDate.year, flightDate.month,
             flightDate.day, flightTime.hour, flightTime.minute);
+
         if (totalTime.isAfter(DateTime.now())) {
           return true;
         } else {
@@ -270,8 +271,56 @@ class FlightFirestore {
         return flag;
       }
     } catch (e) {
-      print(e);
+      return false;
     }
     return false;
+  }
+
+  Future<void> decreaseNumberOfSeats(
+      String flightId, int numOfSeats, String flightClass) async {
+    try {
+      final tempFlight = flights.doc(flightId);
+      final fetchedFlight = await tempFlight.get();
+
+      if (flightClass == 'Business') {
+        int currentSeats = fetchedFlight.data()![numOfAvabusField];
+        if (currentSeats > 0) {
+          int newSeats = currentSeats - numOfSeats;
+          tempFlight.update({numOfAvabusField: newSeats});
+        }
+      } else {
+        int currentSeats = fetchedFlight.data()![numOfAvaEcoField];
+        if (currentSeats > 0) {
+          int newSeats = currentSeats - numOfSeats;
+          await tempFlight.update({numOfAvaEcoField: newSeats});
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> increaseNumberOfSeats(
+      String flightId, int numOfSeats, String flightClass) async {
+    try {
+      final tempFlight = flights.doc(flightId);
+      final fetchedFlight = await tempFlight.get();
+
+      if (flightClass == 'business') {
+        int currentSeats = fetchedFlight.data()![numOfAvabusField];
+        if (currentSeats > 0) {
+          int newSeats = currentSeats + numOfSeats;
+          tempFlight.update({numOfAvabusField: newSeats});
+        }
+      } else {
+        int currentSeats = fetchedFlight.data()![numOfAvaEcoField];
+        if (currentSeats > 0) {
+          int newSeats = currentSeats + numOfSeats;
+          await tempFlight.update({numOfAvaEcoField: newSeats});
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

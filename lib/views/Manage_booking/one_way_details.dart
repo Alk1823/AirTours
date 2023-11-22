@@ -4,7 +4,7 @@ import 'package:AirTours/services/cloud/cloud_booking.dart';
 import 'package:AirTours/services/cloud/cloud_flight.dart';
 import 'package:AirTours/services_auth/firebase_auth_provider.dart';
 import 'package:AirTours/utilities/show_error.dart';
-import 'package:AirTours/views/Global/payment_page.dart';
+
 import 'package:AirTours/views/Manage_booking/tickets_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +14,7 @@ import '../../services/cloud/firestore_booking.dart';
 import '../../services/cloud/firestore_flight.dart';
 import '../../utilities/show_feedback.dart';
 import '../Global/global_var.dart';
+import '../Global/payment_page.dart';
 import '../Global/ticket.dart';
 
 class OneWayDetails extends StatefulWidget {
@@ -233,7 +234,7 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                 children: [
                   const Spacer(),
                   Visibility(
-                    visible: bookingType != 'business',
+                    visible: bookingType != 'Business',
                     child: ElevatedButton(
                       onPressed: () async {
                         if (await _flightsService.didFly(
@@ -259,7 +260,7 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                               setState(() {
                                 showFeedback(
                                     context, 'Booking successfully upgraded.');
-                                bookingType = 'business';
+                                bookingType = 'Business';
                               });
                             } else {
                               showFeedback(
@@ -276,7 +277,7 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
                         padding: const EdgeInsets.symmetric(
-                          vertical: 16.0, 
+                          vertical: 16.0,
                           horizontal: 24.0,
                         ),
                         shape: RoundedRectangleBorder(
@@ -295,7 +296,8 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                   const SizedBox(height: 12.0),
                   ElevatedButton(
                     onPressed: () async {
-                      final canceledBookingPrice = await c.canceledBookingPrice(currentBooking.documentId);
+                      final canceledBookingPrice = await c
+                          .canceledBookingPrice(currentBooking.documentId);
                       bool result = await _bookingService.deleteBooking(
                           bookingId: currentBooking.documentId,
                           flightId1: departFlight.documentId,
@@ -303,7 +305,9 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                           flightClass: currentBooking.bookingClass,
                           numOfPas: currentBooking.numOfSeats);
                       if (result == true) {
-                        c.retrievePreviousBalance(FirebaseAuthProvider.authService().currentUser!.id,canceledBookingPrice);
+                        c.retrievePreviousBalance(
+                            FirebaseAuthProvider.authService().currentUser!.id,
+                            canceledBookingPrice);
                         showFeedback(context, 'Booking successfully deleted.');
                         Navigator.pop(context);
                       } else {

@@ -1,7 +1,7 @@
 import 'package:AirTours/constants/pages_route.dart';
 import 'package:AirTours/views/Global/ticket.dart';
 import 'package:flutter/material.dart';
-import 'credit_card.dart';
+import 'Credit_card.dart';
 
 class Payment extends StatefulWidget {
   final String id1;
@@ -22,8 +22,6 @@ class Payment extends StatefulWidget {
 }
 
 class _PaymentState extends State<Payment> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,16 +38,15 @@ class _PaymentState extends State<Payment> {
               onTap: () async {
                 if (widget.paymentFor != 'upgrade') {
                   await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Creditcard(
-                            paymentFor: widget.paymentFor,
-                            id1: widget.id1,
-                            id2: widget.id2,
-                            flightClass: widget.flightClass,
-                            tickets: widget.tickets))); 
-                }
-                else {
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Creditcard(
+                              paymentFor: widget.paymentFor,
+                              id1: widget.id1,
+                              id2: widget.id2,
+                              flightClass: widget.flightClass,
+                              tickets: widget.tickets)));
+                } else {
                   await Navigator.of(context).pushNamed(upgradeCard);
                 }
               },
@@ -69,9 +66,7 @@ class _PaymentState extends State<Payment> {
                   )),
             ),
             GestureDetector(
-              onTap: () {
-              
-              },
+              onTap: () {},
               child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../Manage_booking/view_bookings.dart';
 import '../One-Way/one_way.dart';
 import '../Profile/profile_view.dart';
@@ -38,7 +37,8 @@ class _BottomState extends State<Bottom> {
       body: pages[indexx],
       bottomNavigationBar: GNav(
           gap: 8,
-          backgroundColor: Colors.blue,
+          backgroundColor:
+              const Color.fromARGB(255, 13, 213, 130), //change color to green
           color: Colors.black,
           activeColor: Colors.white,
           //tabBackgroundColor: Colors.white,
@@ -97,29 +97,38 @@ class _SelectTravelTypeState extends State<SelectTravelType> {
                   Container(
                     height: 45,
                     decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color.fromARGB(255, 13, 213,
+                              130), //new line(border) and(color) Green color
+                        ),
                         boxShadow: const [
-                          BoxShadow(blurRadius: 2, offset: Offset(0, 0))
+                          BoxShadow(
+                              blurRadius: 1,
+                              offset: Offset(0, 0)) //change blurRadius to 1
                         ],
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(25.0)),
                     child: TabBar(
                       indicator: BoxDecoration(
-                          color: Colors.blue,
+                          color: const Color.fromARGB(
+                              255, 13, 213, 130), //change color to green
                           borderRadius: BorderRadius.circular(25)),
                       labelColor: Colors.white,
                       unselectedLabelColor: Colors.black,
-                      tabs: [
-                        const Row(
+                      tabs: const [
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [Tab(text: "One way"), Icon(Icons.flight)],
+                          children: [
+                            Tab(text: "One way"), //Icon(Icons.flight)
+                          ],
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            const Tab(
+                            Tab(
                               text: "Round trip",
                             ),
-                            Image.asset('images/RoundTrip.jpeg'),
+                            //Image.asset('images/RoundTrip.jpeg'),
                           ],
                         )
                       ],

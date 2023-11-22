@@ -3,13 +3,15 @@ import 'package:AirTours/services/cloud/cloud_ticket.dart';
 
 import '../../constants/flight_constants.dart';
 import '../../constants/ticket_constants.dart';
+import 'firestore_flight.dart';
 
 class TicketFirestore {
   final tickets = FirebaseFirestore.instance.collection('tickets');
-  final flights = FirebaseFirestore.instance.collection('flights');
+  final FlightFirestore flightFirestore;
+
   static final TicketFirestore _shared = TicketFirestore._sharedInstance();
 
-  TicketFirestore._sharedInstance();
+  TicketFirestore._sharedInstance() : flightFirestore = FlightFirestore();
 
   factory TicketFirestore() => _shared;
 
@@ -20,6 +22,7 @@ class TicketFirestore {
         .where(flightRefField, isEqualTo: flightId)
         .snapshots()
         .map((event) => event.docs.map((doc) => CloudTicket.fromSnapshot(doc)));
+
     return allTickets;
   }
 
@@ -72,20 +75,19 @@ class TicketFirestore {
   Future<bool> checkInUpdating(String ticketId, String flightId) async {
     try {
       DateTime now = DateTime.now();
-      print('$ticketId , $flightId');
-      final tempFlight = flights.doc(flightId);
+
+      final tempFlight = flightFirestore.flights.doc(flightId);
       final fetchedFlight = await tempFlight.get();
       final tempTicket = tickets.doc(ticketId);
 
       if (fetchedFlight.exists) {
-        print('ok');
         DateTime flightDate = fetchedFlight.data()![depDateField].toDate();
         DateTime flightTime = fetchedFlight.data()![depTimeField].toDate();
         DateTime totalTime = DateTime(flightDate.year, flightDate.month,
             flightDate.day, flightTime.hour, flightTime.minute);
-        print(totalTime);
+
         Duration timeDifference = totalTime.difference(now);
-        print(timeDifference);
+
         if (timeDifference.inHours <= 24) {
           await tempTicket.update({checkInStatusField: true});
 
@@ -96,5 +98,54 @@ class TicketFirestore {
     } catch (e) {
       return false;
     }
+  }
+
+  Future<void> deleteRelatedTickets({required String bookingId}) async {
+    try {
+      final allTickets = await tickets
+          .where(bookingReferenceField, isEqualTo: bookingId)
+          .get();
+
+      final List<QueryDocumentSnapshot> documents = allTickets.docs;
+
+      for (QueryDocumentSnapshot document in documents) {
+        await document.reference.delete();
+      }
+    } catch (e) {
+      print('Error deleting tickets: $e');
+    }
+  }
+
+  Future<double> updateRelatedTickets({
+    required String bookingId,
+    required String flightId,
+    required double ticketPrice,
+  }) async {
+    double totalbookingPrice = 0;
+    try {
+      final allTickets = await tickets
+          .where(bookingReferenceField, isEqualTo: bookingId)
+          .where(flightRefField, isEqualTo: flightId)
+          .get();
+
+      final List<QueryDocumentSnapshot> documents = allTickets.docs;
+
+      for (QueryDocumentSnapshot document in documents) {
+        int numOfBaggage = document[bagQuantityField];
+
+        double updatedTicketPrice =
+            ticketPrice + (numOfBaggage.toDouble() * 251);
+
+        totalbookingPrice = totalbookingPrice + updatedTicketPrice;
+
+        await document.reference.update({
+          ticketClassField: 'business',
+          ticketPriceField: updatedTicketPrice,
+        });
+      }
+    } catch (e) {
+      print('Error updating tickets: $e');
+    }
+    return totalbookingPrice;
   }
 }

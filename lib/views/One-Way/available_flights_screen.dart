@@ -120,9 +120,9 @@ class _OneWaySearchState extends State<OneWaySearch> {
                       final Iterable<CloudFlight> sortedFlights =
                           _flightsService.sortFlightsByDuration(allFlights);
                       final flight = sortedFlights.elementAt(index);
-                      double flightText = widget.flightClass == 'business'
+                      double flightText = widget.flightClass == 'Business'
                           ? flight.busPrice
-                          : flight.guestPrice;
+                          : flight.ecoPrice;
                       DateTime flightDate = flight.depDate.toDate();
                       DateTime flightTime = flight.depTime.toDate();
                       DateTime totalFlightTime = DateTime(

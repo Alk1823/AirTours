@@ -13,7 +13,7 @@ class _WelcomeViewState extends State<WelcomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Column(
@@ -22,17 +22,9 @@ class _WelcomeViewState extends State<WelcomeView> {
           children: [
             Container(
               height: 200,
-              child: Image.asset('img/tours3.png'),
+              child: Image.asset('images/AirTours-5.png'), //change image
             ),
-            const Text(
-              'AirTours',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Color.fromRGBO(137, 147, 158, 1),
-                  fontSize: 40,
-                  fontWeight: FontWeight.w900),
-            ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 30), //delet text()
             MyButton(
                 title: 'Sign Up',
                 onPressed: () async {
@@ -42,7 +34,7 @@ class _WelcomeViewState extends State<WelcomeView> {
                 title: 'Sign In',
                 onPressed: () async {
                   Navigator.of(context).pushNamed(loginRoute);
-                })
+                }),
           ],
         ),
       ),

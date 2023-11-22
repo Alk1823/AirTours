@@ -22,7 +22,6 @@ class _AddAdminState extends State<AddAdmin> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,12 +50,13 @@ class _AddAdminState extends State<AddAdmin> {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () async {
-                   final converted = await c.convertUserToAdmin(email: _email.text,phoneNum: _phoneNum.text);
-                   if (converted) {
-                      await showFeedback(context, 'Admin Added');
-                   } else {
-                      await showErrorDialog(context, 'User Not Found');
-                   }
+                final converted = await c.convertUserToAdmin(
+                    email: _email.text, phoneNum: _phoneNum.text);
+                if (converted) {
+                  await showFeedback(context, 'Admin Added');
+                } else {
+                  await showErrorDialog(context, 'User Not Found');
+                }
               },
               child: const Text('Add Admin'),
             ),
@@ -66,4 +66,3 @@ class _AddAdminState extends State<AddAdmin> {
     );
   }
 }
-

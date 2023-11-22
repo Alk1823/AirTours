@@ -1,5 +1,3 @@
-import 'package:AirTours/views/Manage_booking/one_way_details.dart';
-import 'package:AirTours/views/Manage_booking/round_trip_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -49,7 +47,8 @@ class _HistoryState extends State<History> {
         title: const Text('Booking History'),
       ),
       body: StreamBuilder<Iterable<CloudBooking>>(
-        stream: _bookingService.allBookings(bookingUserId: FirebaseAuthProvider.authService().currentUser!.id),
+        stream: _bookingService.allBookings(
+            bookingUserId: FirebaseAuthProvider.authService().currentUser!.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting ||
               snapshot.connectionState == ConnectionState.active) {
@@ -75,83 +74,107 @@ class _HistoryState extends State<History> {
                           returnFlight = flights[1];
                         }
 
-                        return GestureDetector(
-                          onTap: () {
-                            if (booking.returnFlight == 'none') {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => OneWayDetails(
-                                      booking: booking,
-                                      depFlight: departureFlight),
-                                ),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RoundTripDetails(
-                                      booking: booking,
-                                      depFlight: departureFlight,
-                                      retFlight: returnFlight!),
-                                ),
-                              );
-                            }
-                          },
-                          child: Container(
-                            //width: double.infinity,
-                            margin: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                boxShadow: const [
-                                  BoxShadow(blurRadius: 2, offset: Offset(0, 0))
-                                ],
-                                borderRadius: BorderRadius.circular(20),
-                                color: Colors.white),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
+                        return Container(
+                          //width: double.infinity,
+                          margin: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                              boxShadow: const [
+                                BoxShadow(blurRadius: 2, offset: Offset(0, 0))
+                              ],
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.white),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      date1(departureFlight.depDate),
+                                      style: const TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    if (booking.returnFlight != 'none')
                                       Text(
-                                        date1(departureFlight.depDate),
+                                        date1(returnFlight!.depDate),
                                         style: const TextStyle(
                                           fontSize: 17,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      if (booking.returnFlight != 'none')
-                                        Text(
-                                          date1(returnFlight!.depDate),
-                                          style: const TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold,
+                                  ],
+                                ),
+                                const Text(
+                                  "Referance:",
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                                Text(booking.documentId),
+                                const SizedBox(
+                                  child: Divider(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            departureFlight.fromCity,
+                                            style:
+                                                const TextStyle(fontSize: 19),
                                           ),
-                                        ),
-                                    ],
-                                  ),
-                                  const Text(
-                                    "Referance:",
-                                    style: TextStyle(fontSize: 24),
-                                  ),
-                                  Text(booking.documentId),
-                                  const SizedBox(
-                                    child: Divider(
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Container(
+                                            height: 20,
+                                            child: Image.asset(
+                                                'images/flight-Icon.png'),
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            departureFlight.toCity,
+                                            style:
+                                                const TextStyle(fontSize: 19),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            _flightsService.formatTime(
+                                                departureFlight.depTime),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          const SizedBox(
+                                            width: 20,
+                                            child: Text("-"),
+                                          ),
+                                          Text(
+                                            _flightsService.formatTime(
+                                                departureFlight.arrTime),
+                                          ),
+                                        ],
+                                      )
+                                    ]),
+                                    if (booking.returnFlight != 'none')
                                       Column(children: [
                                         Row(
                                           children: [
                                             Text(
-                                              departureFlight.fromCity,
+                                              returnFlight!.fromCity,
                                               style:
                                                   const TextStyle(fontSize: 19),
                                             ),
@@ -167,7 +190,7 @@ class _HistoryState extends State<History> {
                                               width: 5,
                                             ),
                                             Text(
-                                              departureFlight.toCity,
+                                              returnFlight!.toCity,
                                               style:
                                                   const TextStyle(fontSize: 19),
                                             ),
@@ -177,7 +200,7 @@ class _HistoryState extends State<History> {
                                           children: [
                                             Text(
                                               _flightsService.formatTime(
-                                                  departureFlight.depTime),
+                                                  returnFlight!.depTime),
                                             ),
                                             const SizedBox(
                                               width: 10,
@@ -188,62 +211,14 @@ class _HistoryState extends State<History> {
                                             ),
                                             Text(
                                               _flightsService.formatTime(
-                                                  departureFlight.arrTime),
+                                                  returnFlight!.arrTime),
                                             ),
                                           ],
                                         )
                                       ]),
-                                      if (booking.returnFlight != 'none')
-                                        Column(children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                returnFlight!.fromCity,
-                                                style: const TextStyle(
-                                                    fontSize: 19),
-                                              ),
-                                              const SizedBox(
-                                                width: 5,
-                                              ),
-                                              Container(
-                                                height: 20,
-                                                child: Image.asset(
-                                                    'images/flight-Icon.png'),
-                                              ),
-                                              const SizedBox(
-                                                width: 5,
-                                              ),
-                                              Text(
-                                                returnFlight!.toCity,
-                                                style: const TextStyle(
-                                                    fontSize: 19),
-                                              ),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                _flightsService.formatTime(
-                                                    returnFlight!.depTime),
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              const SizedBox(
-                                                width: 20,
-                                                child: Text("-"),
-                                              ),
-                                              Text(
-                                                _flightsService.formatTime(
-                                                    returnFlight!.arrTime),
-                                              ),
-                                            ],
-                                          )
-                                        ]),
-                                    ],
-                                  )
-                                ],
-                              ),
+                                  ],
+                                )
+                              ],
                             ),
                           ),
                         );

@@ -7,7 +7,6 @@ import 'package:AirTours/views/Manage_booking/tickets_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../../services/cloud/firestore_booking.dart';
 import '../../services/cloud/firestore_flight.dart';
 import '../../services_auth/firebase_auth_provider.dart';
@@ -395,7 +394,7 @@ class _RoundTripDetailsState extends State<RoundTripDetails> {
                 children: [
                   const Spacer(),
                   Visibility(
-                    visible: bookingType != 'business',
+                    visible: bookingType != 'Business',
                     child: ElevatedButton(
                       onPressed: () async {
                         if (await _flightsService.didFly(
@@ -423,7 +422,7 @@ class _RoundTripDetailsState extends State<RoundTripDetails> {
                               setState(() {
                                 showFeedback(
                                     context, 'Booking successfully upgraded.');
-                                bookingType = 'business';
+                                bookingType = 'Business';
                               });
                             } else {
                               showFeedback(
@@ -459,16 +458,19 @@ class _RoundTripDetailsState extends State<RoundTripDetails> {
                   const SizedBox(height: 12.0),
                   ElevatedButton(
                     onPressed: () async {
-                      final canceledBookingPrice = await c.canceledBookingPrice(currentBooking.documentId);
+                      final canceledBookingPrice = await c
+                          .canceledBookingPrice(currentBooking.documentId);
                       bool result = await _bookingService.deleteBooking(
                           bookingId: currentBooking.documentId,
                           flightId1: departFlight.documentId,
                           flightId2: retuFlight.documentId,
                           flightClass: currentBooking.bookingClass,
                           numOfPas: currentBooking.numOfSeats);
-                      print(result);
+
                       if (result == true) {
-                        c.retrievePreviousBalance(FirebaseAuthProvider.authService().currentUser!.id,canceledBookingPrice);
+                        c.retrievePreviousBalance(
+                            FirebaseAuthProvider.authService().currentUser!.id,
+                            canceledBookingPrice);
                         showFeedback(context, 'Booking successfully deleted.');
                         Navigator.pop(context);
                       } else {

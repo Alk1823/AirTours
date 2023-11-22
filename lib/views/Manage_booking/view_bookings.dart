@@ -11,6 +11,7 @@ import '../../services/cloud/firestore_flight.dart';
 import '../../services_auth/firebase_auth_provider.dart';
 import '../Global/global_var.dart';
 
+
 class ViewBookings extends StatefulWidget {
   const ViewBookings({super.key});
 
@@ -23,13 +24,12 @@ class _ViewBookingsState extends State<ViewBookings> {
   late final FlightFirestore _flightsService;
   late final List<CloudFlight> allFlights;
 
-
   CloudFlight? returnFlight;
   CloudFlight? departureFlight;
   @override
   void initState() {
     super.initState();
-    _bookingService = BookingFirestore(); 
+    _bookingService = BookingFirestore();
     _flightsService = FlightFirestore();
   }
 
@@ -76,10 +76,12 @@ class _ViewBookingsState extends State<ViewBookings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 13, 213, 130),
         title: const Text('Current Bookings'),
       ),
       body: StreamBuilder<Iterable<CloudBooking>>(
-        stream: _bookingService.allBookings(bookingUserId: FirebaseAuthProvider.authService().currentUser!.id),
+        stream: _bookingService.allBookings(
+            bookingUserId: FirebaseAuthProvider.authService().currentUser!.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting ||
               snapshot.connectionState == ConnectionState.active) {
@@ -98,6 +100,7 @@ class _ViewBookingsState extends State<ViewBookings> {
                       itemCount: currentBookings.length,
                       itemBuilder: (context, index) {
                         final booking = currentBookings[index];
+
                         return FutureBuilder<List<CloudFlight>>(
                           future: _flightsService.getFlights(
                               booking.departureFlight, booking.returnFlight),
@@ -126,6 +129,7 @@ class _ViewBookingsState extends State<ViewBookings> {
                                       ),
                                     );
                                   } else {
+                                    whichBooking = booking.documentId;
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
