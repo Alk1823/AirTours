@@ -73,6 +73,7 @@ class _UpgradeCardState extends State<UpgradeCard> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 13, 213, 130),
           actions: [
             Expanded(
               child: Row(
@@ -307,18 +308,20 @@ class _UpgradeCardState extends State<UpgradeCard> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
+                            bool isSuccessful = false;
                             setState(() {
                               if (formKey.currentState!.validate()) {
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                    bottomRoute, (route) => false
-                                    );
+                                  isSuccessful = true;
                               }
                             });
-                            String userId = FirebaseAuthProvider.authService().currentUser!.id;
-                            final docR = user.doc(userId);
-                            await docR.update({
-                              'balance' : balance
-                          });
+                            if (isSuccessful) {
+                              String userId = FirebaseAuthProvider.authService().currentUser!.id;
+                              final docR = user.doc(userId);
+                              await docR.update({
+                                'balance' : balance
+                              });
+                              Navigator.pop(context,true);
+                            }
                           },
                           child: Container(
                               margin: const EdgeInsets.all(5),

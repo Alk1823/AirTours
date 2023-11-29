@@ -4,17 +4,14 @@ import 'package:AirTours/services/cloud/cloud_booking.dart';
 import 'package:AirTours/services/cloud/cloud_flight.dart';
 import 'package:AirTours/services_auth/firebase_auth_provider.dart';
 import 'package:AirTours/utilities/show_error.dart';
-
 import 'package:AirTours/views/Manage_booking/tickets_view.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:AirTours/views/Manage_booking/upgrade_card.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../services/cloud/firebase_cloud_storage.dart';
 import '../../services/cloud/firestore_booking.dart';
 import '../../services/cloud/firestore_flight.dart';
 import '../../utilities/show_feedback.dart';
 import '../Global/global_var.dart';
-import '../Global/payment_page.dart';
 import '../Global/ticket.dart';
 
 class OneWayDetails extends StatefulWidget {
@@ -50,22 +47,11 @@ class _OneWayDetailsState extends State<OneWayDetails> {
     bookingType = currentBooking.bookingClass;
   }
 
-  String date1(Timestamp date) {
-    DateTime departureDate = date.toDate();
-    DateFormat formatter = DateFormat('MM dd yyyy');
-    String formattedDate = formatter.format(departureDate);
-    List<String> parts = formattedDate.split(' ');
-    int month = int.parse(parts[0]);
-    String monthName = monthNames[month - 1];
-    String day = parts[1];
-    // String year = parts[2];
-    return '$day $monthName'; //$year';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 13, 213, 130),
         title: const Text('Booking Details'),
       ),
       body: Column(
@@ -112,7 +98,7 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                           ),
                           Container(
                             height: 1.0,
-                            color: Colors.black,
+                            color: Colors.grey,
                             width: double.infinity,
                             //child: SizedBox.expand(),
                           ),
@@ -161,25 +147,39 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                               height: 3,
                             ),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  widget.depFlight.fromCity,
-                                  style: const TextStyle(fontSize: 19),
+                                Row(
+                                  children: [
+                                    Text(
+                                      widget.depFlight.fromCity,
+                                      style: const TextStyle(fontSize: 19),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                      child:
+                                          Image.asset('images/flight-Icon.png'),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      widget.depFlight.toCity,
+                                      style: const TextStyle(fontSize: 19),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                  child: Image.asset('images/flight-Icon.png'),
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  widget.depFlight.toCity,
-                                  style: const TextStyle(fontSize: 19),
-                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                        '${shortCutFlightName[widget.depFlight.fromCity]} - '),
+                                    Text(
+                                        '${shortCutFlightName[widget.depFlight.toCity]}')
+                                  ],
+                                )
                               ],
                             ),
                             Row(
@@ -208,19 +208,22 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                                     ),
                                   ],
                                 ),
-                                Column(
+                                const Column(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                            "Passenger: ${widget.booking.numOfSeats}")
-                                      ],
-                                    )
+                                    // Row(
+                                    //   children: [
+                                    //     Text(
+                                    //         "Passenger: ${widget.booking.numOfSeats}")
+                                    //   ],
+                                    // )
                                   ],
                                 )
                               ],
                             )
                           ]),
+                          const SizedBox(
+                            height: 15,
+                          ),
                         ],
                       )))),
           const SizedBox(height: 16.0),
@@ -235,47 +238,92 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                   const Spacer(),
                   Visibility(
                     visible: bookingType != 'Business',
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (await _flightsService.didFly(
-                            departureFlightId: departFlight.documentId)) {
-                          bool? nextPage = await Navigator.push(
+                    child: Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (await _flightsService.didFly(
+                              departureFlightId: departFlight.documentId)) {
+                            bool? nextPage = await Navigator.push<bool>(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Payment(
-                                    paymentFor: 'upgrade',
-                                    id1: 'none',
-                                    id2: 'none',
-                                    flightClass: 'none',
-                                    tickets: tickets)),
+                                builder: (context) => const UpgradeCard()),
                           );
-                          if (nextPage == true) {
-                            bool result = await _bookingService.upgradeOneWay(
-                              bookingId: currentBooking.documentId,
-                              departureFlightId: departFlight.documentId,
-                              numOfPas: currentBooking.numOfSeats,
-                            );
+                            if (nextPage == true) {
+                              bool result = await _bookingService.upgradeOneWay(
+                                bookingId: currentBooking.documentId,
+                                departureFlightId: departFlight.documentId,
+                                numOfPas: currentBooking.numOfSeats,
+                              );
 
-                            if (result == true) {
-                              setState(() {
-                                showFeedback(
-                                    context, 'Booking successfully upgraded.');
-                                bookingType = 'Business';
-                              });
+                              if (result == true) {
+                                setState(() {
+                                  showSuccessDialog(context,
+                                      'Booking successfully upgraded.');
+                                  bookingType = 'Business';
+                                });
+                              } else {
+                                showErrorDialog(
+                                    context, 'Failed to upgrade booking.');
+                              }
                             } else {
-                              showFeedback(
-                                  context, 'Failed to upgrade booking.');
+                              showErrorDialog(context, 'Payment Failed');
                             }
                           } else {
-                            showErrorDialog(context, 'Payment Failed');
+                            showErrorDialog(context,
+                                'Cannot Upgrade Booking, Upgradation Deadline Passed');
                           }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromARGB(255, 13, 213, 130),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16.0,
+                            horizontal: 24.0,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        child: const Text(
+                          'Upgrade Booking',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Container(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final canceledBookingPrice = await c
+                            .canceledBookingPrice(currentBooking.documentId);
+                        bool result = await _bookingService.deleteBooking(
+                            bookingId: currentBooking.documentId,
+                            flightId1: departFlight.documentId,
+                            flightId2: 'none',
+                            flightClass: currentBooking.bookingClass,
+                            numOfPas: currentBooking.numOfSeats);
+                        if (result == true) {
+                          c.retrievePreviousBalance(
+                              FirebaseAuthProvider.authService()
+                                  .currentUser!
+                                  .id,
+                              canceledBookingPrice);
+                          showSuccessDialog(
+                              context, 'Booking successfully deleted.');
+                          Navigator.pop(context);
                         } else {
                           showErrorDialog(context,
-                              'Cannot Upgrade Booking, Upgradation Deadline Passed');
+                              "Cannot Cancel Booking, Cancellation Deadline Passed");
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: Colors.red,
                         padding: const EdgeInsets.symmetric(
                           vertical: 16.0,
                           horizontal: 24.0,
@@ -285,51 +333,11 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                         ),
                       ),
                       child: const Text(
-                        'Upgrade Booking',
+                        'Cancel Booking',
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12.0),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final canceledBookingPrice = await c
-                          .canceledBookingPrice(currentBooking.documentId);
-                      bool result = await _bookingService.deleteBooking(
-                          bookingId: currentBooking.documentId,
-                          flightId1: departFlight.documentId,
-                          flightId2: 'none',
-                          flightClass: currentBooking.bookingClass,
-                          numOfPas: currentBooking.numOfSeats);
-                      if (result == true) {
-                        c.retrievePreviousBalance(
-                            FirebaseAuthProvider.authService().currentUser!.id,
-                            canceledBookingPrice);
-                        showFeedback(context, 'Booking successfully deleted.');
-                        Navigator.pop(context);
-                      } else {
-                        showErrorDialog(context,
-                            "Cannot Cancel Booking, Cancellation Deadline Passed");
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16.0,
-                        horizontal: 24.0,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: const Text(
-                      'Cancel Booking',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

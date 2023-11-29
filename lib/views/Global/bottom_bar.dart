@@ -1,3 +1,4 @@
+import 'package:AirTours/views/Global/flight_class_for_search.dart';
 import 'package:flutter/material.dart';
 import '../Manage_booking/view_bookings.dart';
 import '../One-Way/one_way.dart';
@@ -5,6 +6,8 @@ import '../Profile/profile_view.dart';
 import '../Round-Trip/round_trip.dart';
 import 'display_history.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+
+import 'global_var.dart';
 
 class Bottom extends StatefulWidget {
   const Bottom({super.key});
@@ -49,20 +52,57 @@ class _BottomState extends State<Bottom> {
           },
           tabs: [
             GButton(
-              onPressed: () => const SelectTravelType(),
+              onPressed: () {
+                List<flightInformation> flightNameTestCopy = List.from(forSave);
+                flightNameTest = flightNameTestCopy;
+                // print("For save: " " ${forSave.length}");
+                // print("flightNameTest: ${flightNameTest.length}");
+                cityNameDel = null;
+                cityNameDel2 = null;
+                indexToUpdate = null;
+                indexToUpdate2 = null;
+                const SelectTravelType();
+              },
               icon: Icons.home,
               text: "Home",
             ),
-            const GButton(
+            GButton(
+              onPressed: () {
+                List<flightInformation> flightNameTestCopy = List.from(forSave);
+                flightNameTest = flightNameTestCopy;
+                //print("hellow1");
+                cityNameDel = null;
+                cityNameDel2 = null;
+                indexToUpdate = null;
+                indexToUpdate2 = null;
+              },
               icon: Icons.history_sharp,
               text: "History",
             ),
-            const GButton(
+            GButton(
+              onPressed: () {
+                List<flightInformation> flightNameTestCopy = List.from(forSave);
+                flightNameTest = flightNameTestCopy;
+                //print("hellow2");
+                cityNameDel = null;
+                cityNameDel2 = null;
+                indexToUpdate = null;
+                indexToUpdate2 = null;
+              },
               icon: Icons.manage_history_sharp,
               text: "Manage",
             ),
             GButton(
-              onPressed: () => const ProfileView(),
+              onPressed: () {
+                List<flightInformation> flightNameTestCopy = List.from(forSave);
+                flightNameTest = flightNameTestCopy;
+                //print("hellow4");
+                cityNameDel = null;
+                cityNameDel2 = null;
+                indexToUpdate = null;
+                indexToUpdate2 = null;
+                const ProfileView();
+              },
               icon: Icons.person_2_sharp,
               text: "Profile",
             )
@@ -109,6 +149,17 @@ class _SelectTravelTypeState extends State<SelectTravelType> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(25.0)),
                     child: TabBar(
+                      onTap: (value) {
+                        List<flightInformation> flightNameTestCopy =
+                            List.from(forSave);
+                        flightNameTest = flightNameTestCopy;
+                        //print("For save: " " ${forSave.length}");
+                        //print("flightNameTest: ${flightNameTest.length}");
+                        cityNameDel = null;
+                        cityNameDel2 = null;
+                        indexToUpdate = null;
+                        indexToUpdate2 = null;
+                      },
                       indicator: BoxDecoration(
                           color: const Color.fromARGB(
                               255, 13, 213, 130), //change color to green

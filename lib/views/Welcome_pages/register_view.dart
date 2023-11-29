@@ -17,15 +17,18 @@ class RegisterView extends StatefulWidget {
 class _RegisterViewState extends State<RegisterView> {
   bool _isSecurePassword = true; //new line(_isSecurePassword)
   final FirebaseCloudStorage c = FirebaseCloudStorage();
+  final _formKey = GlobalKey<FormState>();
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final TextEditingController _password2;
+  late final TextEditingController _phoneNum;
 
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
     _password2 = TextEditingController();
+    _phoneNum = TextEditingController();
     super.initState();
   }
 
@@ -56,156 +59,287 @@ class _RegisterViewState extends State<RegisterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white, //change color to white
-      body: Center(
-        //create center widget
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  height: 200,
-                  child: Image.asset('images/AirTours-5.png'), //change image
-                ), //delet text contain('AirTours')
-                const SizedBox(height: 30),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white, //change color to white
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: TextField(
-                    //textAlign: TextAlign.center,
-                    controller: _email,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.mail), //new line(prefixIcon)
-                        border: InputBorder.none, //new line(border)
+      body: Form(
+        key: _formKey,
+        child: Center(
+          //create center widget
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    height: 200,
+                    child: Image.asset('images/AirTours-5.png'), //change image
+                  ), //delet text contain('AirTours')
+                  const SizedBox(height: 30),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Enter email";
+                        }
+                        final emailRegex = RegExp(
+                            r"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$");
+                        if (!emailRegex.hasMatch(value)) {
+                          return "Enter a valid email";
+                        } else {
+                          return null;
+                        }
+                      },
+                      controller: _email,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.mail,color: Colors.green,),
+                        border: InputBorder.none,
                         hintText: 'Email',
                         enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                          color: Color.fromARGB(
-                              255, 13, 213, 130), //change color to green
-                        )),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                          ),
+                        ),
                         focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(
-                                    255, 13, 213, 130), //change color to green
-                                width: 3))),
-                  ),
-                ),
-                const SizedBox(height: 10), //change height to 10
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white, //change color to white
-                      borderRadius: BorderRadius.circular(5)),
-                  child: TextField(
-                    //textAlign: TextAlign.center,
-                    controller: _password,
-                    obscureText: _isSecurePassword, //new line(obscureText)
-                    decoration: InputDecoration(
-                      border: InputBorder.none, //new line(border)
-                      prefixIcon: const Icon(Icons.key), //new line(prefixIcon)
-                      hintText: 'Password',
-                      suffixIcon: togglePassword(), //new line(suffixIcon)
-                      enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
-                        color: Color.fromARGB(
-                            255, 13, 213, 130), //change color to green
-                      )),
-                      focusedBorder: const OutlineInputBorder(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                            width: 3,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Color.fromARGB(
-                                  255, 13, 213, 130), //change color to green
-                              width: 3)),
+                            color: Colors.red,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                            width: 3,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 10), //change height to 10
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white, //change color to white
-                      borderRadius: BorderRadius.circular(5)),
-                  child: TextField(
-                    //textAlign: TextAlign.center,
-                    controller: _password2,
-                    obscureText: _isSecurePassword, //new line (obscureText)
-                    decoration: InputDecoration(
+                  const SizedBox(height: 10), //change height to 10
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white, //change color to white
+                        borderRadius: BorderRadius.circular(5)),
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Enter password";
+                        }
+                        // Add a check for the minimum length of the password
+                        if (value.length < 6) {
+                          return "Password must be at least 6 characters long";
+                        } else {
+                          return null;
+                        }
+                      },
+                      //textAlign: TextAlign.center,
+                      controller: _password,
+                      obscureText: _isSecurePassword, //new line(obscureText)
+                      decoration: InputDecoration(
                         border: InputBorder.none, //new line(border)
                         prefixIcon:
-                            const Icon(Icons.key), //new line(prefixIcon)
+                            const Icon(Icons.key,color: Colors.green,), //new line(prefixIcon)
+                        hintText: 'Password',
+                        suffixIcon: togglePassword(), //new line(suffixIcon)
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                          ),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                            width: 3,
+                          ),
+                        ),
+                        errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                          ),
+                        ),
+                        focusedErrorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                            width: 3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10), //change height to 10
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white, //change color to white
+                        borderRadius: BorderRadius.circular(5)),
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Enter password";
+                        } 
+                        if (_password.text != _password2.text) {
+                          return "Password doesn't match!";
+                        }
+                        else {
+                          return null;
+                        }
+                      },
+                      //textAlign: TextAlign.center,
+                      controller: _password2,
+                      obscureText: _isSecurePassword, //new line (obscureText)
+                      decoration: InputDecoration(
+                        border: InputBorder.none, //new line(border)
+                        prefixIcon:
+                            const Icon(Icons.key,color: Colors.green,), //new line(prefixIcon)
                         hintText: 'Confirm Password',
                         suffixIcon: togglePassword(), //new line(suffixIcon)
                         enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                          color: Color.fromARGB(
-                              255, 13, 213, 130), //change color to green
-                        )),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                          ),
+                        ),
                         focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(
-                                    255, 13, 213, 130), //change color to green
-                                width: 3))),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                            width: 3,
+                          ),
+                        ),
+                        errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                          ),
+                        ),
+                        focusedErrorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                            width: 3,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10), //change height to 10
-                MyButton(
-                    title: 'Register',
-                    onPressed: () async {
-                      final email = _email.text;
-                      final pass = _password.text;
-                      final pass2 = _password2.text;
-                      if (pass != pass2) {
-                        showErrorDialog(context, "Password doesn't match!");
-                      } else {
-                        try {
-                          await FirebaseAuthProvider.authService()
-                              .createUser(email: email, password: pass);
-
-                          final String userId =
-                              FirebaseAuthProvider.authService()
-                                  .currentUser!
-                                  .id;
-                          final String currentEmail =
-                              FirebaseAuthProvider.authService()
-                                  .currentUser!
-                                  .email;
-                          c.createNewUser(
-                              ownerUserId: userId,
-                              email: currentEmail,
-                              phoneNum: '',
-                              balance: 0.0);
-                          FirebaseAuthProvider.authService()
-                              .sendEmailVerification();
-                          await Navigator.of(context)
-                              .pushNamed(verficationRoute);
-                        } on WeakPasswordAuthException {
-                          await showErrorDialog(context, 'Weak password');
-                        } on EmailAlreadyInUseAuthException {
-                          await showErrorDialog(
-                              context, 'Email already in use');
-                        } on InvalidEmailAuthException {
-                          await showErrorDialog(
-                              context, 'This is an invalid email');
-                        } on GenericAuthException {
-                          await showErrorDialog(context, 'Failed to register');
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white, //change color to white
+                        borderRadius: BorderRadius.circular(5)),
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Enter phone number";
                         }
-                      }
-                    }),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text('Already Registered?'),
-                    TextButton(
-                        onPressed: () async {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              loginRoute, (route) => false);
-                        },
-                        child: const Text('Login Here'))
-                  ],
-                )
-              ],
+
+                        // Add a simple check for a valid phone number pattern
+                        final phoneRegex = RegExp(r'^05\d{8}$');
+                        if (!phoneRegex.hasMatch(value)) {
+                          return "Enter a valid 10-digit phone number";
+                        } else {
+                          return null;
+                        }
+                      },
+                      controller: _phoneNum,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.phone,color: Colors.green,), //new line(prefixIcon)
+                        border: InputBorder.none,
+                        hintText: 'Phone Number (Begins With 05)',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                            width: 3,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                            width: 3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10), //change height to 10
+                  MyButton(
+                      title: 'Register',
+                      onPressed: () async {
+                           bool isSuccessful = false;
+                    setState(() {
+                      if (_formKey.currentState!.validate()) {
+                          isSuccessful = true;
+                        }
+                      });
+                    if (isSuccessful) {
+                        final email = _email.text;
+                            try {
+                              await FirebaseAuthProvider.authService()
+                                  .createUser(email: email, password: _password.text);
+
+                              final String userId =
+                                  FirebaseAuthProvider.authService()
+                                      .currentUser!
+                                      .id;
+                              final String currentEmail =
+                                  FirebaseAuthProvider.authService()
+                                      .currentUser!
+                                      .email;
+                              c.createNewUser(
+                                  ownerUserId: userId,
+                                  email: currentEmail,
+                                  phoneNum: _phoneNum.text,
+                                  balance: 0.0);
+                              FirebaseAuthProvider.authService()
+                                  .sendEmailVerification();
+                              await Navigator.of(context)
+                                  .pushNamed(verficationRoute);
+                            } on WeakPasswordAuthException {
+                              await showErrorDialog(context, 'Weak password');
+                            } on EmailAlreadyInUseAuthException {
+                              await showErrorDialog(
+                                  context, 'Email already in use');
+                            } on InvalidEmailAuthException {
+                              await showErrorDialog(
+                                  context, 'This is an invalid email');
+                            } on GenericAuthException {
+                              await showErrorDialog(
+                                  context, 'Failed to register');
+                            }
+                    }
+                          
+                      }),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('Already Registered?'),
+                      TextButton(
+                          onPressed: () async {
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                loginRoute, (route) => false);
+                          },
+                          child: const Text('Login Here'))
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),

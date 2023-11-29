@@ -114,7 +114,7 @@ class _ProfileViewState extends State<ProfileView> {
                   onPressed: () async {
                     await FirebaseAuthProvider.authService().logOut();
                     await Navigator.of(context).pushNamedAndRemoveUntil(
-                        loginForEmailChangesRoute, (route) => false);
+                        loginForPasswordChangesRoute, (route) => false);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,

@@ -4,6 +4,9 @@ import 'package:AirTours/services/cloud/firestore_ticket.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:AirTours/services/cloud/cloud_booking.dart';
 import 'package:AirTours/constants/booking_constants.dart';
+import 'package:intl/intl.dart';
+
+import '../../views/Global/global_var.dart';
 
 class BookingFirestore {
   final bookings = FirebaseFirestore.instance.collection('bookings');
@@ -66,8 +69,7 @@ class BookingFirestore {
         }
       }
       return flag;
-    } catch (e) {
-      print('Error occurred w seat availability: $e');
+    } catch (_) {
       return false;
     }
   }
@@ -224,4 +226,46 @@ class BookingFirestore {
         numOfSeats: numOfSeats,
         bookingTime: bookingTimestamp);
   }
+}
+
+String date1(Timestamp date) {
+  DateTime departureDate = date.toDate();
+  DateFormat formatter = DateFormat('MM dd yyyy');
+  String formattedDate = formatter.format(departureDate);
+  List<String> parts = formattedDate.split(' ');
+  int month = int.parse(parts[0]);
+  String monthName = monthNames[month - 1];
+  String day = parts[1];
+  String year = parts[2];
+  return '$day $monthName $year';
+}
+
+String date2(Timestamp date) {
+  DateTime departureDate = date.toDate();
+  DateFormat formatter = DateFormat('MM dd yyyy');
+  String formattedDate = formatter.format(departureDate);
+  List<String> parts = formattedDate.split(' ');
+  int month = int.parse(parts[0]);
+  int monthName = month;
+  String day = parts[1];
+  String year = parts[2];
+  return '$day/$monthName/$year';
+}
+
+String boardingTime(Timestamp departureTime) {
+  DateTime departureDateTime = departureTime.toDate();
+  DateTime boardingDateTime =
+      departureDateTime.subtract(const Duration(minutes: 30));
+  int hour = boardingDateTime.hour % 12;
+  if (hour == 0) {
+    hour = 12;
+  }
+  String formattedHour = hour.toString();
+  if (formattedHour.length == 1) {
+    formattedHour = ' $formattedHour';
+  }
+  String formattedBoardingTime =
+      '$formattedHour:${boardingDateTime.minute.toString().padLeft(2, '0')} ${boardingDateTime.hour >= 12 ? 'PM' : 'AM'}';
+
+  return formattedBoardingTime;
 }

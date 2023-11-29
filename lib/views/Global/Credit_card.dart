@@ -152,12 +152,13 @@ class _CreditcardState extends State<Creditcard> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 13, 213, 130),
           actions: [
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                    Text('Booking Price: ${price}',style: const TextStyle(fontSize: 16),),
+                    Text('Booking Price: $price',style: const TextStyle(fontSize: 16),),
                     const SizedBox(width: 10,),
                     FutureBuilder<double>(
                       future: showBalance(),
@@ -373,20 +374,22 @@ class _CreditcardState extends State<Creditcard> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
+                            bool isSuccessful = false;
                             setState(() {
                               if (formKey.currentState!.validate()) {
-                                if (widget.paymentFor == 'booking') {
-                                  toNext(widget.tickets);
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                      bottomRoute, (route) => false);
-                                } 
+                                isSuccessful = true;
                               }
                             });
-                            String userId = FirebaseAuthProvider.authService().currentUser!.id;
-                            final docR = user.doc(userId); 
-                            await docR.update({
-                              'balance': balance
+                            if (isSuccessful) {
+                              toNext(widget.tickets);
+                              String userId = FirebaseAuthProvider.authService().currentUser!.id;
+                              final docR = user.doc(userId); 
+                              await docR.update({
+                                'balance': balance
                             });
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                bottomRoute, (route) => false);
+                            }
                           },
                           child: Container(
                               margin: const EdgeInsets.all(5),

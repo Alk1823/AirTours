@@ -13,3 +13,4 @@ const loginForEmailChangesRoute = '/loginForEmailChangeView/';
 const loginForPasswordChangesRoute = '/loginForPasswordChangeView/';
 const loginForDeleteRoute = '/loginForDeleteView/';
 const upgradeCard = '/upgradeCard/';
+const resetView = '/ResetView/';

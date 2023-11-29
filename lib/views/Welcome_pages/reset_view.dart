@@ -1,22 +1,22 @@
 import 'package:AirTours/constants/pages_route.dart';
 import 'package:AirTours/services_auth/auth_exceptions.dart';
 import 'package:AirTours/utilities/show_error.dart';
-import 'package:AirTours/utilities/show_feedback.dart';
 import 'package:flutter/material.dart';
 import '../../services/cloud/firebase_cloud_storage.dart';
 import '../../services_auth/firebase_auth_provider.dart';
 
-class UpdateEmailView extends StatefulWidget {
-  const UpdateEmailView({super.key});
+class ResetPassword extends StatefulWidget {
+  const ResetPassword({super.key});
 
   @override
-  State<UpdateEmailView> createState() => _UpdateEmailViewState();
+  State<ResetPassword> createState() => _ResetPasswordState();
 }
 
-class _UpdateEmailViewState extends State<UpdateEmailView> {
+class _ResetPasswordState extends State<ResetPassword> {
   late final TextEditingController _email;
   final FirebaseCloudStorage c = FirebaseCloudStorage();
   final formKey = GlobalKey<FormState>();
+  final FirebaseAuthProvider a = FirebaseAuthProvider();
 
   @override
   void initState() {
@@ -29,7 +29,7 @@ class _UpdateEmailViewState extends State<UpdateEmailView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 13, 213, 130),
-        title: const Text('Update Email'),
+        title: const Text('Reset Password'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -57,9 +57,9 @@ class _UpdateEmailViewState extends State<UpdateEmailView> {
                     controller: _email,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.email,color: Colors.green), //new line(prefixIcon)
+                      prefixIcon: Icon(Icons.email,color: Colors.green,), //new line(prefixIcon)
                       border: InputBorder.none,
-                      labelText: 'New Email',
+                      labelText: 'Email',
                     ),
                     validator: (value) {
                       if (value!.isEmpty || !RegExp(r'^[a-zA-Z0-9]+@[a-zA-Z]+\.(com)$').hasMatch(value)) {
@@ -81,27 +81,15 @@ class _UpdateEmailViewState extends State<UpdateEmailView> {
                         }
                       });
                     if (isSuccessful) {
-                    String newEmail = _email.text;
-                    try {
-                      await FirebaseAuthProvider.authService()
-                          .updateUserEmail(email: newEmail);
-
-                      final String currentUser =
-                          FirebaseAuthProvider.authService().currentUser!.id;
-                      c.updateUser(
-                          ownerUserId: currentUser,
-                          email: newEmail,
-                          phoneNum: "0580647715");
-                      await showSuccessDialog(context, 'Information Updated');
-                      await FirebaseAuthProvider.authService().logOut();
-                      await Navigator.of(context).pushNamed(loginRoute);
-                    } on EmailAlreadyInUseAuthException {
-                      await showErrorDialog(context, 'Email Already Used');
-                    } on InvalidEmailAuthException {
-                      await showErrorDialog(context, 'Invalid Email');
-                    } on GenericAuthException {
-                      await showErrorDialog(context, 'Updating Error');
-                    }
+                      try {
+                        await a.resetPassword(_email.text);
+                        await Navigator.of(context).pushNamedAndRemoveUntil(loginRoute, (route) => false);
+                      } on UserNotFoundAuthException {
+                        await showErrorDialog(context, 'User Not Found');
+                      } on GenericAuthException {
+                        await showErrorDialog(context, 'Authentication Error');
+                      }
+                      
                     }
                   },
                   child: Container(
@@ -118,36 +106,12 @@ class _UpdateEmailViewState extends State<UpdateEmailView> {
                         color: const Color.fromARGB(255, 13, 213, 130)),
                     child: const Center(
                         child: Text(
-                      'Update!',
+                      'Reset',
                       style: TextStyle(fontSize: 16, color: Colors.white),
                     )),
                   ),
                 ),
                 const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: () async {
-                   await Navigator.of(context)
-                      .pushNamedAndRemoveUntil(bottomRoute, (route) => false);
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 8, right: 8),
-                    padding: const EdgeInsets.all(15),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        boxShadow: const [
-                          BoxShadow(
-                              blurRadius: 1,
-                              offset: Offset(0, 0)) //change blurRadius
-                        ],
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color.fromARGB(255, 13, 213, 130)),
-                    child: const Center(
-                        child: Text(
-                      'Cancel',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    )),
-                  ),
-                )
               ],
             ),
           ),

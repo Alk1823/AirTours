@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:AirTours/views/Global/global_var.dart';
 import '../../services/cloud/cloud_booking.dart';
-import 'Credit_card.dart';
+import 'credit_card.dart';
 
 class Enterinfo extends StatefulWidget {
   final String id1;
@@ -106,6 +106,7 @@ class _EnterinfoState extends State<Enterinfo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 13, 213, 130),
         title: const Text('Passenger Info'),
         centerTitle: true,
       ),
@@ -588,7 +589,7 @@ class _EnterinfoState extends State<Enterinfo> {
                         BoxShadow(blurRadius: 2, offset: Offset(0, 0)),
                       ],
                       borderRadius: BorderRadius.circular(20),
-                      color: Colors.blue,
+                      color: const Color.fromARGB(255, 13, 213, 130),
                     ),
                     child: Center(
                       child: Text(

@@ -3,10 +3,8 @@ import 'package:AirTours/services/cloud/cloud_flight.dart';
 import 'package:AirTours/services/cloud/cloud_ticket.dart';
 import 'package:AirTours/services/cloud/firestore_ticket.dart';
 import 'package:AirTours/utilities/show_error.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import '../Global/global_var.dart';
+import '../../services/cloud/firestore_booking.dart';
 import 'boarding_pass.dart';
 
 class TicketsView extends StatefulWidget {
@@ -36,35 +34,11 @@ class _TicketsViewState extends State<TicketsView> {
     bookingId = widget.booking.documentId;
   }
 
-  String date1(Timestamp date) {
-    DateTime departureDate = date.toDate();
-    DateFormat formatter = DateFormat('MM dd yyyy');
-    String formattedDate = formatter.format(departureDate);
-    List<String> parts = formattedDate.split(' ');
-    int month = int.parse(parts[0]);
-    String monthName = monthNames[month - 1];
-    String day = parts[1];
-    String year = parts[2];
-    return '$monthName $day $year';
-  }
-
-  String date2(Timestamp date) {
-    DateTime departureDate = date.toDate();
-    DateFormat formatter = DateFormat('MM dd yyyy');
-    String formattedDate = formatter.format(departureDate);
-    List<String> parts = formattedDate.split(' ');
-    int month = int.parse(parts[0]);
-    int monthName = month;
-    String day = parts[1];
-    String year = parts[2];
-    return '$day/$monthName/$year';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color.fromARGB(255, 13, 213, 130),
         centerTitle: true,
         title: const Text(
           'List of Tickets',
@@ -137,7 +111,7 @@ class _TicketsViewState extends State<TicketsView> {
                               ),
                               Container(
                                 height: 1.0,
-                                color: Colors.black,
+                                color: Colors.grey,
                                 width: double.infinity,
                               ),
                               const Row(
@@ -207,8 +181,13 @@ class _TicketsViewState extends State<TicketsView> {
                                   Text("${ticket.bagQuantity}")
                                 ],
                               ),
+                              Container(
+                                height: 1.0,
+                                color: Colors.grey,
+                                width: double.infinity,
+                              ),
                               const SizedBox(
-                                height: 20,
+                                height: 10,
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -266,11 +245,12 @@ class _TicketsViewState extends State<TicketsView> {
                             width: double.infinity,
                             margin: const EdgeInsets.all(5),
                             decoration: BoxDecoration(
-                                boxShadow: const [
-                                  BoxShadow(blurRadius: 2, offset: Offset(0, 0))
-                                ],
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.blue),
+                              boxShadow: const [
+                                BoxShadow(blurRadius: 2, offset: Offset(0, 0))
+                              ],
+                              borderRadius: BorderRadius.circular(10),
+                              color: const Color.fromARGB(255, 13, 213, 130),
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [

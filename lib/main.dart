@@ -12,6 +12,7 @@ import 'package:AirTours/views/Profile/update_email.dart';
 import 'package:AirTours/views/Profile/update_password.dart';
 import 'package:AirTours/views/Welcome_pages/login_view.dart';
 import 'package:AirTours/views/Welcome_pages/register_view.dart';
+import 'package:AirTours/views/Welcome_pages/reset_view.dart';
 import 'package:AirTours/views/Welcome_pages/verification_view.dart';
 import 'package:AirTours/views/Welcome_pages/welcome_page.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,8 @@ Future<void> main() async {
       loginForEmailChangesRoute: (context) => const LoginForEmailChanges(),
       loginForPasswordChangesRoute: (context) => const LoginForPasswordChanges(),
       loginForDeleteRoute:(context) => const LoginForDelete(),
-      upgradeCard:(context) => const UpgradeCard()
+      upgradeCard:(context) => const UpgradeCard(),
+      resetView:(context) => const ResetPassword() 
     },
   ));
 }

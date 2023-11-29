@@ -1,8 +1,6 @@
 import 'package:AirTours/views/Manage_booking/one_way_details.dart';
 import 'package:AirTours/views/Manage_booking/round_trip_details.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../services/cloud/cloud_booking.dart';
 import '../../services/cloud/cloud_flight.dart';
 
@@ -10,7 +8,6 @@ import '../../services/cloud/firestore_booking.dart';
 import '../../services/cloud/firestore_flight.dart';
 import '../../services_auth/firebase_auth_provider.dart';
 import '../Global/global_var.dart';
-
 
 class ViewBookings extends StatefulWidget {
   const ViewBookings({super.key});
@@ -58,18 +55,6 @@ class _ViewBookingsState extends State<ViewBookings> {
         MaterialPageRoute(
             builder: (context) => RoundTripDetails(
                 booking: booking, depFlight: depFlight, retFlight: retFlight)));
-  }
-
-  String date1(Timestamp date) {
-    DateTime departureDate = date.toDate();
-    DateFormat formatter = DateFormat('MM dd yyyy');
-    String formattedDate = formatter.format(departureDate);
-    List<String> parts = formattedDate.split(' ');
-    int month = int.parse(parts[0]);
-    String monthName = monthNames[month - 1];
-    String day = parts[1];
-    String year = parts[2];
-    return '$monthName $day $year';
   }
 
   @override
@@ -309,7 +294,7 @@ class _ViewBookingsState extends State<ViewBookings> {
                                               children: [
                                                 const Text("Price: ",
                                                     style: TextStyle(
-                                                      fontSize: 18.0,
+                                                      fontSize: 16.0,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.black87,
@@ -323,9 +308,23 @@ class _ViewBookingsState extends State<ViewBookings> {
                                             ),
                                             Row(
                                               children: [
+                                                const Text("Passenger: ",
+                                                    style: TextStyle(
+                                                      fontSize: 16.0,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black87,
+                                                    )),
+                                                Text("${booking.numOfSeats}",
+                                                    style: const TextStyle(
+                                                        fontSize: 15))
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
                                                 const Text("class: ",
                                                     style: TextStyle(
-                                                      fontSize: 18.0,
+                                                      fontSize: 16.0,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.black87,

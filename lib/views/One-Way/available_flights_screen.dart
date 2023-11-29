@@ -91,7 +91,7 @@ class _OneWaySearchState extends State<OneWaySearch> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Colors.blue[900],
+            backgroundColor: const Color.fromARGB(255, 13, 213, 130),
             centerTitle: true,
             title: Text('${widget.from} to ${widget.to} ',
                 style: const TextStyle(

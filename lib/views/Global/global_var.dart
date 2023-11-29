@@ -127,3 +127,40 @@ List<flightInformation> flightNameTest = [
   flightInformation('Yanbu Al Bahr', "YNB"),
 ];
 String whichBooking = "";
+
+List<flightInformation> forSave = [
+  flightInformation('Abha', "AHB"),
+  flightInformation('Al Baha', "ABT"),
+  flightInformation('AlUla', "ULH"),
+  flightInformation('Arar', "RAE"),
+  flightInformation('Bisha', "BHH"),
+  flightInformation('Dammam', "DMM"),
+  flightInformation('Dawadmi', "DWD"),
+  flightInformation('Gassim', "ELQ"),
+  flightInformation('Gizan', "GIZ"),
+  flightInformation('Gurayat', "URY"),
+  flightInformation('Hail', "HAS"),
+  flightInformation('Hofuf', "HOF"),
+  flightInformation('Jeddah', "JED"),
+  flightInformation('Jouf', "AJF"),
+  flightInformation('Madinah', "MED"),
+  flightInformation('Nejran', "EAM"),
+  flightInformation('Neom', "NUM"),
+  flightInformation('Qaisumah', "AQI"),
+  flightInformation('Rafha', "RAH"),
+  flightInformation('Riyadh', "RUH"),
+  flightInformation('Sharurah', "SHW"),
+  flightInformation('Tabuk', "TUU"),
+  flightInformation('Taif', "TIF"),
+  flightInformation('Turaif', "TUI"),
+  flightInformation('Wadi Al Dawaser', "WAE"),
+  flightInformation('Wedjh', "EJH"),
+  flightInformation('Yanbu Al Bahr', "YNB"),
+];
+
+//for one way search
+String? cityNameDel;
+String? cityNameDel2;
+
+int? indexToUpdate; //new line
+int? indexToUpdate2; //new line

@@ -7,16 +7,10 @@ import '../../services/cloud/cloud_storage_exceptions.dart';
 import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/show_feedback.dart';
 
-
 class ChargeBalance extends StatefulWidget {
-  
-final String balance;
+  final String balance;
 
-  const ChargeBalance(
-      {super.key,
-      required this.balance
-      });
-
+  const ChargeBalance({super.key, required this.balance});
 
   @override
   State<ChargeBalance> createState() => _ChargeBalanceState();
@@ -30,16 +24,15 @@ class _ChargeBalanceState extends State<ChargeBalance> {
   TextEditingController expiryDate = TextEditingController();
   final user = FirebaseFirestore.instance.collection('user');
 
-  
   Future<void> toNext() async {
     try {
-    String userId = FirebaseAuthProvider.authService().currentUser!.id;
-    final docRef = user.doc(userId);
-    final docSnap = await docRef.get();
-    final currentBalance = docSnap.data()![balanceFieldName];
-    final toDouble = double.parse(widget.balance);
-    final newBalance = toDouble + currentBalance;
-    await docRef.update({"balance":newBalance});
+      String userId = FirebaseAuthProvider.authService().currentUser!.id;
+      final docRef = user.doc(userId);
+      final docSnap = await docRef.get();
+      final currentBalance = docSnap.data()![balanceFieldName];
+      final toDouble = double.parse(widget.balance);
+      final newBalance = toDouble + currentBalance;
+      await docRef.update({"balance": newBalance});
     } catch (_) {
       throw CouldNotUpdateInformationException();
     }
@@ -246,11 +239,10 @@ class _ChargeBalanceState extends State<ChargeBalance> {
                             setState(() {
                               if (formKey.currentState!.validate()) {
                                 toNext();
-                                showFeedback(context,'balance successefully added'); 
+                                showSuccessDialog(
+                                    context, 'balance successefully added');
                                 Navigator.of(context).pushNamedAndRemoveUntil(
-                                  bottomRoute,
-                                  (route) => false
-                                  );
+                                    bottomRoute, (route) => false);
                               }
                             });
                           },

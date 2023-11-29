@@ -1,11 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
-// Container(
-//               margin: const EdgeInsets.all(5),
-//               width: double.infinity,
-//               decoration: BoxDecoration(boxShadow: const [
-//                 BoxShadow(blurRadius: 2, offset: Offset(0, 0))
-//               ], borderRadius: BorderRadius.circular(20), color: Colors.white),
-//               child:
+
 import 'package:AirTours/constants/pages_route.dart';
 import 'package:AirTours/utilities/show_feedback.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,6 +10,7 @@ import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/show_error.dart';
 import '../Global/global_var.dart';
 import '../Global/show_city_name_search.dart';
+import 'package:AirTours/views/Global/flight_class_for_search.dart';
 
 class CreateFlight extends StatefulWidget {
   const CreateFlight({super.key});
@@ -113,19 +107,75 @@ class _CreateFlightState extends State<CreateFlight> {
     return newFlight;
   }
 
-  void _navigateToCitySelectionPage(BuildContext context, int num) async {
+ void _navigateToCitySelectionPage(BuildContext context, int num) async {
     final city = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const FromSearch(fromOrTo: 1)),
+      MaterialPageRoute(
+          builder: (context) => const FromSearch(
+                fromOrTo: 1,
+              )),
     );
 
     if (city != null) {
       setState(() {
         if (num == 1) {
-          selectedCity1 = city;
+          if (cityNameDel == null) {
+            selectedCity1 = city;
+            cityNameDel = city;
+            flightNameTest.removeWhere(
+                (flightInfo) => flightInfo.cityName == cityNameDel);
+          } else {
+            if (cityNameDel == null) {
+              selectedCity1 = city;
+              cityNameDel = city;
+              List<flightInformation> flightNameTestCopy = List.from(forSave);
+              flightNameTest = flightNameTestCopy;
+              flightNameTest.removeWhere(
+                  (flightInfo) => flightInfo.cityName == cityNameDel);
+              selectedCity1 = city;
+              cityNameDel = city;
+            } else {
+              selectedCity1 = city;
+              cityNameDel = city;
+              List<flightInformation> flightNameTestCopy = List.from(forSave);
+              flightNameTest = flightNameTestCopy;
+              flightNameTest.removeWhere(
+                  (flightInfo) => flightInfo.cityName == cityNameDel2);
+              flightNameTest.removeWhere(
+                  (flightInfo) => flightInfo.cityName == cityNameDel);
+            }
+          }
+
+          // flightNameTest = flightNameTest
+          //     .where((flightInfo) => flightInfo.cityName != cityNameDel)
+          //     .toList();
+          // print(cityNameDel);
         }
         if (num == 2) {
-          selectedCity2 = city;
+          if (cityNameDel2 == null) {
+            selectedCity2 = city;
+            cityNameDel2 = city;
+            flightNameTest.removeWhere(
+                (flightInfo) => flightInfo.cityName == cityNameDel2);
+          } else {
+            if (cityNameDel == null) {
+              selectedCity2 = city;
+              cityNameDel2 = city;
+              List<flightInformation> flightNameTestCopy = List.from(forSave);
+              flightNameTest = flightNameTestCopy;
+              flightNameTest.removeWhere(
+                  (flightInfo) => flightInfo.cityName == cityNameDel2);
+            } else {
+              selectedCity2 = city;
+              cityNameDel2 = city;
+              List<flightInformation> flightNameTestCopy = List.from(forSave);
+              flightNameTest = flightNameTestCopy;
+              flightNameTest.removeWhere(
+                  (flightInfo) => flightInfo.cityName == cityNameDel2);
+              flightNameTest.removeWhere(
+                  (flightInfo) => flightInfo.cityName == cityNameDel);
+            }
+          }
         }
       });
     }
@@ -135,6 +185,7 @@ class _CreateFlightState extends State<CreateFlight> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 13, 213, 130),
           title: const Text(
             "Admin",
           ),
@@ -153,9 +204,15 @@ class _CreateFlightState extends State<CreateFlight> {
           leading: IconButton(
             icon: const Icon(
               Icons.power_settings_new_rounded,
-              color: Colors.white,
+              color: Colors.red,
             ),
             onPressed: () {
+              List<flightInformation> flightNameTestCopy = List.from(forSave);
+              flightNameTest = flightNameTestCopy;
+              cityNameDel = null;
+              cityNameDel2 = null;
+              indexToUpdate = null;
+              indexToUpdate2 = null;
               FirebaseAuthProvider.authService().logOut();
               Navigator.of(context).pushNamed(loginRoute);
             },
@@ -172,19 +229,20 @@ class _CreateFlightState extends State<CreateFlight> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Container(
-                            margin: const EdgeInsets.all(5),
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                                boxShadow: const [
-                                  BoxShadow(blurRadius: 2, offset: Offset(0, 0))
-                                ],
-                                borderRadius: BorderRadius.circular(15),
-                                color: Colors.white),
-                            child: GestureDetector(
-                              onTap: () {
-                                _navigateToCitySelectionPage(context, 1);
-                              },
+                          GestureDetector(
+                            onTap: () {
+                              _navigateToCitySelectionPage(context, 1);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.all(5),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        blurRadius: 2, offset: Offset(0, 0))
+                                  ],
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.white),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
@@ -217,20 +275,20 @@ class _CreateFlightState extends State<CreateFlight> {
                           const SizedBox(
                             width: 10,
                           ),
-                          Container(
-                              margin: const EdgeInsets.all(5),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                  boxShadow: const [
-                                    BoxShadow(
-                                        blurRadius: 2, offset: Offset(0, 0))
-                                  ],
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Colors.white),
-                              child: GestureDetector(
-                                onTap: () {
-                                  _navigateToCitySelectionPage(context, 2);
-                                },
+                          GestureDetector(
+                              onTap: () {
+                                _navigateToCitySelectionPage(context, 2);
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.all(5),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    boxShadow: const [
+                                      BoxShadow(
+                                          blurRadius: 2, offset: Offset(0, 0))
+                                    ],
+                                    borderRadius: BorderRadius.circular(15),
+                                    color: Colors.white),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
@@ -574,7 +632,7 @@ class _CreateFlightState extends State<CreateFlight> {
                                       keyboardType: TextInputType.number,
                                       textAlign: TextAlign.start,
                                       decoration: const InputDecoration(
-                                        hintText: "Guest Seats",
+                                        hintText: "Economy Seats",
                                         suffixIcon: Icon(Icons.man_4),
                                         border: InputBorder.none,
                                         contentPadding:
@@ -657,7 +715,7 @@ class _CreateFlightState extends State<CreateFlight> {
                                       keyboardType: TextInputType.number,
                                       textAlign: TextAlign.start,
                                       decoration: const InputDecoration(
-                                        hintText: "Guset Price",
+                                        hintText: "Economy Price",
                                         suffixText: "SAR",
                                         border: InputBorder.none,
                                         contentPadding:
@@ -761,7 +819,7 @@ class _CreateFlightState extends State<CreateFlight> {
                                             depTime: dateTimeDep);
 
                                         clearAllFields();
-                                        await showFeedback(
+                                        await showSuccessDialog(
                                             context, 'Flight Added');
                                       } else {
                                         await showErrorDialog(context,
@@ -783,7 +841,8 @@ class _CreateFlightState extends State<CreateFlight> {
                                             blurRadius: 2, offset: Offset(0, 0))
                                       ],
                                       borderRadius: BorderRadius.circular(15),
-                                      color: Colors.green[500]),
+                                      color: const Color.fromARGB(
+                                          255, 13, 213, 130)),
                                   child: const Padding(
                                     padding: EdgeInsets.all(15.0),
                                     child: Text(

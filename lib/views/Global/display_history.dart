@@ -1,12 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../services/cloud/cloud_booking.dart';
 import '../../services/cloud/cloud_flight.dart';
 import '../../services/cloud/firestore_booking.dart';
 import '../../services/cloud/firestore_flight.dart';
 import '../../services_auth/firebase_auth_provider.dart';
-import '../Global/global_var.dart';
 
 class History extends StatefulWidget {
   const History({super.key});
@@ -28,22 +25,11 @@ class _HistoryState extends State<History> {
     _flightsService = FlightFirestore();
   }
 
-  String date1(Timestamp date) {
-    DateTime departureDate = date.toDate();
-    DateFormat formatter = DateFormat('MM dd yyyy');
-    String formattedDate = formatter.format(departureDate);
-    List<String> parts = formattedDate.split(' ');
-    int month = int.parse(parts[0]);
-    String monthName = monthNames[month];
-    String day = parts[1];
-    String year = parts[2];
-    return '$monthName $day $year';
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 13, 213, 130),
         title: const Text('Booking History'),
       ),
       body: StreamBuilder<Iterable<CloudBooking>>(
@@ -88,32 +74,34 @@ class _HistoryState extends State<History> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
+                                const Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      date1(departureFlight.depDate),
-                                      style: const TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      "Referance:",
+                                      style: TextStyle(fontSize: 24),
                                     ),
-                                    if (booking.returnFlight != 'none')
-                                      Text(
-                                        date1(returnFlight!.depDate),
-                                        style: const TextStyle(
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                    Text(
+                                      "Booking Time",
+                                      style: TextStyle(fontSize: 24),
+                                    ),
                                   ],
                                 ),
-                                const Text(
-                                  "Referance:",
-                                  style: TextStyle(fontSize: 24),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(booking.documentId),
+                                    Row(
+                                      children: [
+                                        Text(date1(booking.bookingTime)),
+                                        Text(
+                                            ' , ${_flightsService.formatTime(booking.bookingTime)}'),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                Text(booking.documentId),
                                 const SizedBox(
                                   child: Divider(
                                     color: Colors.black,
@@ -134,7 +122,7 @@ class _HistoryState extends State<History> {
                                           const SizedBox(
                                             width: 5,
                                           ),
-                                          Container(
+                                          SizedBox(
                                             height: 20,
                                             child: Image.asset(
                                                 'images/flight-Icon.png'),
@@ -181,7 +169,7 @@ class _HistoryState extends State<History> {
                                             const SizedBox(
                                               width: 5,
                                             ),
-                                            Container(
+                                            SizedBox(
                                               height: 20,
                                               child: Image.asset(
                                                   'images/flight-Icon.png'),
@@ -216,6 +204,58 @@ class _HistoryState extends State<History> {
                                           ],
                                         )
                                       ]),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  child: Divider(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Text("Price: ",
+                                            style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black87,
+                                            )),
+                                        Text(
+                                          "${booking.bookingPrice}",
+                                          style: const TextStyle(fontSize: 15),
+                                        )
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Text("Passenger: ",
+                                            style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black87,
+                                            )),
+                                        Text("${booking.numOfSeats}",
+                                            style:
+                                                const TextStyle(fontSize: 15))
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Text("class: ",
+                                            style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black87,
+                                            )),
+                                        Text(
+                                          booking.bookingClass,
+                                          style: const TextStyle(fontSize: 15),
+                                        )
+                                      ],
+                                    ),
                                   ],
                                 )
                               ],

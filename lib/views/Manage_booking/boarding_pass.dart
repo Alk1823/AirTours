@@ -1,12 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:AirTours/views/Global/global_var.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-
 import '../../services/cloud/cloud_booking.dart';
 import '../../services/cloud/cloud_flight.dart';
 import '../../services/cloud/cloud_ticket.dart';
+import '../../services/cloud/firestore_booking.dart';
 import '../../services/cloud/firestore_flight.dart';
-import '../Global/global_var.dart';
 
 class BoardingPass extends StatefulWidget {
   final CloudTicket ticket;
@@ -31,73 +30,12 @@ class _BoardingPassState extends State<BoardingPass> {
     _flightsService = FlightFirestore();
   }
 
-  String date1(Timestamp date) {
-    DateTime departureDate = date.toDate();
-    DateFormat formatter = DateFormat('MM dd yyyy');
-    String formattedDate = formatter.format(departureDate);
-    List<String> parts = formattedDate.split(' ');
-    int month = int.parse(parts[0]);
-    String monthName = monthNames[month - 1];
-    String day = parts[1];
-    String year = parts[2];
-    return '$monthName $day $year';
-  }
-
-  String date2(Timestamp date) {
-    DateTime departureDate = date.toDate();
-    DateFormat formatter = DateFormat('MM dd yyyy');
-    String formattedDate = formatter.format(departureDate);
-    List<String> parts = formattedDate.split(' ');
-    int month = int.parse(parts[0]);
-    int monthName = month;
-    String day = parts[1];
-    String year = parts[2];
-    return '$day/$monthName/$year';
-  }
-
-  // String boardingTime(Timestamp departureTime) {
-  //   DateTime departureDateTime = departureTime.toDate();
-  //   DateTime boardingDateTime =
-  //       departureDateTime.subtract(Duration(minutes: 30));
-
-  //   String formattedBoardingTime =
-  //       boardingDateTime.hour.toString().padLeft(2, '0') +
-  //           ':' +
-  //           boardingDateTime.minute.toString().padLeft(2, '0') +
-  //           ' ' +
-  //           (boardingDateTime.hour >= 12 ? 'PM' : 'AM');
-
-  //   return formattedBoardingTime;
-  // }
-  String boardingTime(Timestamp departureTime) {
-    DateTime departureDateTime = departureTime.toDate();
-    DateTime boardingDateTime =
-        departureDateTime.subtract(Duration(minutes: 30));
-
-    int hour = boardingDateTime.hour % 12;
-    if (hour == 0) {
-      hour = 12;
-    }
-
-    String formattedHour = hour.toString();
-    if (formattedHour.length == 1) {
-      formattedHour = ' ' + formattedHour;
-    }
-
-    String formattedBoardingTime = formattedHour +
-        ':' +
-        boardingDateTime.minute.toString().padLeft(2, '0') +
-        ' ' +
-        (boardingDateTime.hour >= 12 ? 'PM' : 'AM');
-
-    return formattedBoardingTime;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Boarding Pass"),
+          backgroundColor: const Color.fromARGB(255, 13, 213, 130),
+          title: const Text("Boarding Pass"),
         ),
         body: SafeArea(
           child: Column(
@@ -118,41 +56,6 @@ class _BoardingPassState extends State<BoardingPass> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // const Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Text(
-                          //       "Ticket:",
-                          //       style: TextStyle(
-                          //         fontSize: 18.0,
-                          //         fontWeight: FontWeight.bold,
-                          //         color: Colors.black87,
-                          //       ),
-                          //     ),
-                          //     Text("Booking Reference:",
-                          //         style: TextStyle(
-                          //           fontSize: 18.0,
-                          //           fontWeight: FontWeight.bold,
-                          //           color: Colors.black87,
-                          //         ))
-                          //   ],
-                          // ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Text(widget.ticket.documentId),
-                          //     Text(widget.booking.documentId)
-                          //   ],
-                          // ),
-                          // const SizedBox(
-                          //   height: 10,
-                          // ),
-                          // Container(
-                          //   height: 1.0,
-                          //   color: Colors.black,
-                          //   width: double.infinity,
-                          //   //child: SizedBox.expand(),
-                          // ),
                           const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -213,7 +116,7 @@ class _BoardingPassState extends State<BoardingPass> {
                             children: [
                               Text(
                                 boardingTime(widget.flight.depTime),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14.0,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black87,
@@ -221,10 +124,10 @@ class _BoardingPassState extends State<BoardingPass> {
                               ),
                               Row(
                                 children: [
-                                  Text("${date1(widget.flight.depDate)}"),
+                                  Text(date1(widget.flight.depDate)),
                                   Text(
                                     ",${_flightsService.formatTime(widget.flight.depTime)}",
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black87,
@@ -265,7 +168,7 @@ class _BoardingPassState extends State<BoardingPass> {
                           ),
                           Container(
                             height: 1.0,
-                            color: Colors.black,
+                            color: Colors.grey,
                             width: double.infinity,
                             //child: SizedBox.expand(),
                           ),
@@ -292,8 +195,10 @@ class _BoardingPassState extends State<BoardingPass> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(widget.flight.fromAirport),
-                              Text(widget.flight.toAirport)
+                              Text(
+                                  "${shortCutFlightName[widget.flight.fromCity]}"),
+                              Text(
+                                  "${shortCutFlightName[widget.flight.toCity]}"),
                             ],
                           ),
                           const SizedBox(
@@ -323,46 +228,19 @@ class _BoardingPassState extends State<BoardingPass> {
                               Text(widget.ticket.ticketClass)
                             ],
                           ),
-                          // const SizedBox(
-                          //   height: 20,
-                          // ),
-                          // const Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Text("Meal Type:",
-                          //         style: TextStyle(
-                          //           fontSize: 18.0,
-                          //           fontWeight: FontWeight.bold,
-                          //           color: Colors.black87,
-                          //         )),
-                          //     Row(
-                          //       children: [
-                          //         Text("Baggage quantity:",
-                          //             style: TextStyle(
-                          //               fontSize: 18.0,
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black87,
-                          //             )),
-                          //         //Text("${ticket.bagQuantity}")
-                          //       ],
-                          //     )
-                          //   ],
-                          // ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Text(widget.ticket.mealType),
-                          //     Text("${widget.ticket.bagQuantity}")
-                          //   ],
-                          // ),
                           const SizedBox(
                             height: 10,
                           ),
-                          Container(
-                            width: double.infinity,
-                            height: 100,
-                            child: Image.asset('images/BarCode.jpeg'),
+                          BarcodeWidget(
+                            data: widget.ticket.documentId,
+                            barcode: Barcode.aztec(),
+                            margin: const EdgeInsets.all(30),
                           ),
+                          // Container(
+                          //   width: double.infinity,
+                          //   height: 100,
+                          //   child: Image.asset('images/BarCode.jpeg'),
+                          // ),
                         ],
                       ),
                     ),

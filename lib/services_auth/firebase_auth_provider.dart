@@ -141,6 +141,18 @@ const FirebaseAuthProvider();
           throw UserNotLoggedInAuthException();
     }
       }
+
+      Future<void> resetPassword(String email) async {
+        try {
+          await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+          } on FirebaseAuthException catch (e) {
+        if (e.code == 'user-not-found') {
+          throw UserNotFoundAuthException();
+        }}
+        catch (_) {
+          throw GenericAuthException();
+        }
+      }
   } 
 
 

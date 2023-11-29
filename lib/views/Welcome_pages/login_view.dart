@@ -9,6 +9,7 @@ import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/button.dart';
 import '../../utilities/show_error.dart';
 
+
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -20,6 +21,7 @@ class _LoginViewState extends State<LoginView> {
   bool _isSecurePassword = true; //new line(_isSecurePassword)
   late final TextEditingController _email;
   late final TextEditingController _password;
+  final _formKey = GlobalKey<FormState>();
   FirebaseCloudStorage c = FirebaseCloudStorage();
 
   @override
@@ -55,82 +57,137 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white, //change to white
-      body: Center(
-        //new line(center)
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  height: 200,
-                  child: Image.asset('images/AirTours-5.png'), //new image
-                ),
-                // const Text(
-                //   'AirTours',
-                //   textAlign: TextAlign.center,
-                //   style: TextStyle(
-                //       color: Color.fromRGBO(21, 132, 71, 100),
-                //       fontSize: 40,
-                //       fontWeight: FontWeight.w900),
-                // ),
-                const SizedBox(height: 30),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white, //change to white
-                      borderRadius: BorderRadius.circular(5)),
-                  child: TextField(
-                    //textAlign: TextAlign.center, //this one remove
-                    controller: _email,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.mail), //new line(prefixIcon)
+      body: Form(
+        key: _formKey,
+        child: Center(
+          //new line(center)
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    height: 200,
+                    child: Image.asset('images/AirTours-5.png'), //new image
+                  ),
+                  // const Text(
+                  //   'AirTours',
+                  //   textAlign: TextAlign.center,
+                  //   style: TextStyle(
+                  //       color: Color.fromRGBO(21, 132, 71, 100),
+                  //       fontSize: 40,
+                  //       fontWeight: FontWeight.w900),
+                  // ),
+                  const SizedBox(height: 30),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white, //change to white
+                        borderRadius: BorderRadius.circular(5)),
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Enter email";
+                        }
+                        final emailRegex = RegExp(
+                            r"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$");
+                        if (!emailRegex.hasMatch(value)) {
+                          return "Enter a valid email";
+                        } else {
+                          return null;
+                        }
+                      },
+                      //textAlign: TextAlign.center, //this one remove
+                      controller: _email,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.mail,color: Colors.green,), //new line(prefixIcon)
                         border: InputBorder.none, //new line(border)
                         hintText: 'Email',
                         enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(255, 13, 213,
-                                    130))), //change color to green
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                          ),
+                        ),
                         focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(
-                                    255, 13, 213, 130), //change color to green
-                                width: 3))),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                            width: 3,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                            width: 3,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10), //change size to 10
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.white), //change color to white
-                  child: TextField(
-                    //textAlign: TextAlign.center, //this one remove
-                    controller: _password,
-                    obscureText: _isSecurePassword, //new line(obscureText)
-                    decoration: InputDecoration(
+                  const SizedBox(height: 10), //change size to 10
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white), //change color to white
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Enter password";
+                        } else {
+                          return null;
+                        }
+                      },
+                      //textAlign: TextAlign.center, //this one remove
+                      controller: _password,
+                      obscureText: _isSecurePassword, //new line(obscureText)
+                      decoration: InputDecoration(
                         border: InputBorder.none, //new line(border)
                         prefixIcon:
-                            const Icon(Icons.lock), //new line(prefixIcon)
+                            const Icon(Icons.lock,color: Colors.green,), //new line(prefixIcon)
                         hintText: 'Password',
                         suffixIcon: togglePassword(), //new line(suffixIcon)
                         enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: Color.fromARGB(
-                                  255, 13, 213, 130)), //change color to green
+                            color: Color.fromARGB(255, 13, 213, 130),
+                          ),
                         ),
                         focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromARGB(
-                                    255, 13, 213, 130), //change color to green
-                                width: 3))),
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                            width: 3,
+                          ),
+                        ),
+                        errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.red,
+                          ),
+                        ),
+                        focusedErrorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Color.fromARGB(255, 13, 213, 130),
+                            width: 3,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10), //change size to 10
-                MyButton(
-                    title: 'Login',
-                    onPressed: () async {
+                  const SizedBox(height: 10), //change size to 10
+                  MyButton(
+                      title: 'Login',
+                      onPressed: () async {
+                        bool isSuccessful = false;
+                    setState(() {
+                      if (_formKey.currentState!.validate()) {
+                          isSuccessful = true;
+                        }
+                      });
+                    if (isSuccessful) {
                       final email = _email.text;
                       final pass = _password.text;
                       try {
@@ -173,22 +230,29 @@ class _LoginViewState extends State<LoginView> {
                       } on GenericAuthException {
                         await showErrorDialog(context, 'Authentication Error');
                       }
-                    }),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Not Registered? ',
-                    ),
-                    TextButton(
-                        onPressed: () async {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
+                    }
+                      }),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Not Registered? ',
+                      ),
+                      TextButton(
+                          onPressed: () async {
+                            await Navigator.of(context).pushNamedAndRemoveUntil(
                               registerRoute, (route) => false);
-                        },
-                        child: const Text("Register Now"))
-                  ],
-                )
-              ],
+                          },
+                          child: const Text("Register Now"))
+                    ],
+                  ),
+                  TextButton(
+                  onPressed: () async {
+                    await Navigator.of(context).pushNamed(resetView);
+                  },
+                   child: const Text("Forgot Password"))
+                ],
+              ),
             ),
           ),
         ),

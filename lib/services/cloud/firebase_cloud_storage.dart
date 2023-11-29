@@ -1,6 +1,7 @@
 import 'package:AirTours/constants/booking_constants.dart';
 import 'package:AirTours/constants/flight_constants.dart';
 import 'package:AirTours/constants/ticket_constants.dart';
+import 'package:AirTours/constants/user_constants.dart';
 import 'package:AirTours/services/cloud/cloud_storage_exceptions.dart';
 import 'package:AirTours/services/cloud/firestore_flight.dart';
 import 'package:AirTours/utilities/show_balance.dart';
@@ -169,17 +170,31 @@ class FirebaseCloudStorage {
     
   }
 
-  Future<bool> convertUserToAdmin({required String email,required String phoneNum}) async {
+  Future<int> convertUserToAdmin({required String email,required String phoneNum}) async {
     final users = await user.where(
       'email' , isEqualTo: email
     ).get();
     final documents = users.docs;
     if (documents.isNotEmpty) {
-      await admins.add({"email": email, "phoneNum": phoneNum});
-      return true;
+      bool isExist = await isAdminExist(email);
+      if (!isExist) {
+        await admins.add({"email": email, "phoneNum": phoneNum});
+      return 0;
+      }
+      else {
+        return 1; //admin is there
+      }
     } else {
-      return false;
+      return 2; //user not found
     }
+  }
+
+  Future<bool> isAdminExist(String email) async {
+    final admin = await admins.where(
+      emailFieldName , isEqualTo: email
+    ).get();
+    final documents = admin.docs;
+    return documents.isNotEmpty;
   }
 }
 
