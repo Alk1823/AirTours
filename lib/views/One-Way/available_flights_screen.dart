@@ -1,4 +1,5 @@
 import 'package:AirTours/services/cloud/cloud_flight.dart';
+import 'package:AirTours/services/cloud/firebase_cloud_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../services/cloud/firestore_flight.dart';
@@ -26,6 +27,7 @@ class OneWaySearch extends StatefulWidget {
 
 class _OneWaySearchState extends State<OneWaySearch> {
   late final FlightFirestore _flightsService;
+  FirebaseCloudStorage c = FirebaseCloudStorage();
 
   @override
   void initState() {
@@ -131,9 +133,16 @@ class _OneWaySearchState extends State<OneWaySearch> {
                           flightDate.day,
                           flightTime.hour,
                           flightTime.minute);
-
-                      if (DateTime.now().isBefore(totalFlightTime)) {
-                        return GestureDetector(
+                      return FutureBuilder(
+                        future: c.isDuplicateFlight(flight.documentId),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+                          else if (snapshot.data! == true) {
+                            return const SizedBox.shrink();
+                          } else if (DateTime.now().isBefore(totalFlightTime)) {
+                            return GestureDetector(
                           onTap: () {
                             toNext(flight.documentId, flightText,
                                 widget.flightClass);
@@ -219,9 +228,10 @@ class _OneWaySearchState extends State<OneWaySearch> {
                                 ),
                               )),
                         );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        },);
                     },
                   );
                 } else {

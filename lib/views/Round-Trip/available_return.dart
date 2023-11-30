@@ -1,6 +1,7 @@
 import 'package:AirTours/services/cloud/cloud_flight.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../../services/cloud/firebase_cloud_storage.dart';
 import '../../services/cloud/firestore_flight.dart';
 import '../Global/final_pasenger_info.dart';
 
@@ -31,6 +32,7 @@ class RoundTripSearch2 extends StatefulWidget {
 }
 
 class _RoundTripSearch2State extends State<RoundTripSearch2> {
+  FirebaseCloudStorage c = FirebaseCloudStorage();
   late final FlightFirestore _flightsService;
   void toNext(String id, double flightPrice, String flightClass) {
     Navigator.push(
@@ -144,7 +146,15 @@ class _RoundTripSearch2State extends State<RoundTripSearch2> {
                           flightTime2.hour,
                           flightTime2.minute);
 
-                      if (totalTime2.isAfter(totalTime1)) {
+                       return FutureBuilder(
+                        future: c.isDuplicateFlight2(flight.documentId),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+                          else if (snapshot.data! == true) {
+                            return const SizedBox.shrink();
+                          } else if (totalTime2.isAfter(totalTime1)) {
                         return GestureDetector(
                           onTap: () {
                             toNext(flight.documentId, flightText,
@@ -231,9 +241,10 @@ class _RoundTripSearch2State extends State<RoundTripSearch2> {
                                 ),
                               )),
                         );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
+                      }  else {
+                            return const SizedBox.shrink();
+                          }
+                        },);
                     },
                   );
                 } else {
@@ -247,3 +258,6 @@ class _RoundTripSearch2State extends State<RoundTripSearch2> {
         )));
   }
 }
+
+
+

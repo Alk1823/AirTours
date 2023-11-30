@@ -238,7 +238,6 @@ class _RegisterViewState extends State<RegisterView> {
                         if (value == null || value.isEmpty) {
                           return "Enter phone number";
                         }
-
                         // Add a simple check for a valid phone number pattern
                         final phoneRegex = RegExp(r'^05\d{8}$');
                         if (!phoneRegex.hasMatch(value)) {
@@ -252,7 +251,7 @@ class _RegisterViewState extends State<RegisterView> {
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.phone,color: Colors.green,), //new line(prefixIcon)
                         border: InputBorder.none,
-                        hintText: 'Phone Number (Begins With 05)',
+                        hintText: 'Phone Number 05********',
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Color.fromARGB(255, 13, 213, 130),

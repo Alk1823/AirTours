@@ -90,11 +90,10 @@ class FirebaseCloudStorage {
 
   Future<void> updateUser(
       {required String ownerUserId,
-      required String email,
-      required String phoneNum}) async {
+      required String email}) async {
     try {
       DocumentReference docRef = user.doc(ownerUserId);
-      await docRef.update({"email": email, "phoneNum": phoneNum});
+      await docRef.update({"email": email});
     } catch (_) {
       throw CouldNotUpdateInformationException();
     }
@@ -178,7 +177,7 @@ class FirebaseCloudStorage {
     if (documents.isNotEmpty) {
       bool isExist = await isAdminExist(email);
       if (!isExist) {
-        await admins.add({"email": email, "phoneNum": phoneNum});
+        await admins.add({"email": email});
       return 0;
       }
       else {
@@ -196,5 +195,44 @@ class FirebaseCloudStorage {
     final documents = admin.docs;
     return documents.isNotEmpty;
   }
+
+  Future<bool> isDuplicateFlight(String flightId) async {
+    final userId = FirebaseAuthProvider.authService().currentUser!.id;
+    final booking = await bookings.where(
+      bookingUserIdField , isEqualTo: userId
+    ).get();
+    final documents = booking.docs;
+    bool isDuplicate = false;
+    if (documents.isNotEmpty) {
+      for (final document in documents) {
+        if (document[departureFlightField] == flightId ) {
+          isDuplicate = true;
+        }
+      }
+      return isDuplicate;
+    } else {
+      return isDuplicate;
+    }
+  }
+
+  Future<bool> isDuplicateFlight2(String flightId) async {
+    final userId = FirebaseAuthProvider.authService().currentUser!.id;
+    final booking = await bookings.where(
+      bookingUserIdField , isEqualTo: userId
+    ).get();
+    final documents = booking.docs;
+    bool isDuplicate = false;
+    if (documents.isNotEmpty) {
+      for (final document in documents) {
+        if (document[returnFlightField] == flightId) {
+          isDuplicate = true;
+        }
+      }
+      return isDuplicate;
+    } else {
+      return isDuplicate;
+    }
+  }
+
 }
 

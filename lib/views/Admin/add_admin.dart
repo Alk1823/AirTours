@@ -73,40 +73,7 @@ class _AddAdminState extends State<AddAdmin> {
                   ),
                 ),
                 const SizedBox(height: 16.0),
-                Container(
-                  //new line (container and all of it is inside)
-                  width: double.infinity,
-                  margin: const EdgeInsets.only(left: 8, right: 8), //0
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                        color: const Color.fromARGB(255, 13, 213,
-                            130), //new line(border) and(color) Green color
-                      ),
-                      boxShadow: const [
-                        BoxShadow(blurRadius: 2, offset: Offset(0, 0))
-                      ],
-                      borderRadius: BorderRadius.circular(13),
-                      color: Colors.white),
-                  child: TextFormField(
-                    controller: _phoneNum,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.phone,color: Colors.green,), //new line(prefixIcon)
-                      border: InputBorder.none,
-                      labelText: 'Phone Number (Begins With 05)',
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty || !RegExp(r'^05\d{8}$').hasMatch(value)) {
-                        return 'Enter a valid phone number';
-                      } else {
-                        return null;
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
+                  ElevatedButton(
                   onPressed: () async {
                     bool isSuccessful = false;
                     setState(() {
