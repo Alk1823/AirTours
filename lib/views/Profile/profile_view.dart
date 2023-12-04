@@ -221,6 +221,43 @@ class _ProfileViewState extends State<ProfileView> {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: SizedBox(
+                height: 70,
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.support_agent_rounded,
+                            color: Color.fromARGB(255, 13, 213, 130),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            'Support: AirToursProject@gmail.com',
+                            style:
+                                TextStyle(fontSize: 16.0, color: Colors.black),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(height: 16.0),
             Padding(
               padding: const EdgeInsets.all(5.0),

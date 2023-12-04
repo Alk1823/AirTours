@@ -287,7 +287,7 @@ class FlightFirestore {
         int currentSeats = fetchedFlight.data()![numOfAvabusField];
         if (currentSeats > 0) {
           int newSeats = currentSeats - numOfSeats;
-          tempFlight.update({numOfAvabusField: newSeats});
+          await tempFlight.update({numOfAvabusField: newSeats});
         }
       } else {
         int currentSeats = fetchedFlight.data()![numOfAvaEcoField];
@@ -309,7 +309,7 @@ class FlightFirestore {
         int currentSeats = fetchedFlight.data()![numOfAvabusField];
         if (currentSeats > 0) {
           int newSeats = currentSeats + numOfSeats;
-          tempFlight.update({numOfAvabusField: newSeats});
+          await tempFlight.update({numOfAvabusField: newSeats});
         }
       } else {
         int currentSeats = fetchedFlight.data()![numOfAvaEcoField];

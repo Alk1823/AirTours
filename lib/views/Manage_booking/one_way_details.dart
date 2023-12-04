@@ -314,11 +314,11 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                                   .currentUser!
                                   .id,
                               canceledBookingPrice);
-                          await showSuccessDialog(
-                              context, 'Booking successfully deleted.');
+                          // await showSuccessDialog(
+                          //     context, 'Booking successfully deleted.');
                           Navigator.pop(context);
                         } else {
-                          await showErrorDialog(context,
+                           await showErrorDialog(context,
                               "Cannot Cancel Booking, Cancellation Deadline Passed");
                         }
                       },

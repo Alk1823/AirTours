@@ -56,7 +56,7 @@ class BookingFirestore {
               ticketPrice: busSeatPrice1,
             );
 
-            bookings.doc(bookingId).update({
+            await bookings.doc(bookingId).update({
               bookingPriceField: totalPrice,
               bookingClassField: 'Business',
             });
@@ -100,13 +100,13 @@ class BookingFirestore {
             double busSeatPrice1 = fetchedDep.data()![busPriceField];
             double busSeatPrice2 = fetchedRet.data()![busPriceField];
             if (currentBus1 >= numOfPas && currentBus2 >= numOfPas) {
-              flightFirestore.decreaseNumberOfSeats(
+              await flightFirestore.decreaseNumberOfSeats(
                   departureFlightId, numOfPas, 'Business');
-              flightFirestore.decreaseNumberOfSeats(
+              await flightFirestore.decreaseNumberOfSeats(
                   returnFlightId, numOfPas, 'Business');
-              flightFirestore.increaseNumberOfSeats(
+              await flightFirestore.increaseNumberOfSeats(
                   departureFlightId, numOfPas, 'Economy');
-              flightFirestore.increaseNumberOfSeats(
+              await flightFirestore.increaseNumberOfSeats(
                   returnFlightId, numOfPas, 'Economy');
               double totalPrice1 = await ticketFirestore.updateRelatedTickets(
                   flightId: departureFlightId,
@@ -118,7 +118,7 @@ class BookingFirestore {
                   ticketPrice: busSeatPrice2);
               double totalPrice = totalPrice1 + totalPrice2;
 
-              bookings.doc(bookingId).update({
+              await bookings.doc(bookingId).update({
                 bookingPriceField: totalPrice,
                 bookingClassField: 'Business'
               });
@@ -208,10 +208,10 @@ class BookingFirestore {
       numOfSeatsField: numOfSeats,
       bookingTimeField: bookingTimestamp
     });
-    flightFirestore.decreaseNumberOfSeats(
+    await flightFirestore.decreaseNumberOfSeats(
         departureFlight, numOfSeats, bookingClass);
     if (returnFlight != 'none') {
-      flightFirestore.decreaseNumberOfSeats(
+      await flightFirestore.decreaseNumberOfSeats(
           returnFlight, numOfSeats, bookingClass);
     }
 

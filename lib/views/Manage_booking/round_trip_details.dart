@@ -464,14 +464,11 @@ class _RoundTripDetailsState extends State<RoundTripDetails> {
                             numOfPas: currentBooking.numOfSeats);
 
                         if (result == true) {
-                          print("hellow 55");
                           c.retrievePreviousBalance(
                               FirebaseAuthProvider.authService()
                                   .currentUser!
                                   .id,
                               canceledBookingPrice);
-                          await showSuccessDialog(
-                              context, 'Booking successfully deleted.');
                           Navigator.pop(context);
                         } else {
                           await showErrorDialog(context,

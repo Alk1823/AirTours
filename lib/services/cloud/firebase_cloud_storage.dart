@@ -154,7 +154,7 @@ class FirebaseCloudStorage {
         counter += 1;
       }
       final totBusPrice = busFlightPrice * counter;
-      final upgradePrice = totBusPrice - ticketsPrice;
+      final double upgradePrice = totBusPrice - ticketsPrice;
       return upgradePrice + 0.0;
     } else {
       return 0;
