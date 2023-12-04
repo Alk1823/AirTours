@@ -118,6 +118,14 @@ class _RoundTripSearch1State extends State<RoundTripSearch1> {
                 if (snapshot.hasData) {
                   final Iterable<CloudFlight> allFlights =
                       snapshot.data as Iterable<CloudFlight>;
+                  if (allFlights.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "No flights available",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    );
+                  }
                   return ListView.builder(
                     itemCount: allFlights.length,
                     itemBuilder: (context, index) {
@@ -140,101 +148,103 @@ class _RoundTripSearch1State extends State<RoundTripSearch1> {
                       return FutureBuilder(
                         future: c.isDuplicateFlight(flight.documentId),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        }
-                          else if (snapshot.data! == true) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.data! == true) {
                             return const SizedBox.shrink();
                           } else if (DateTime.now().isBefore(totalFlightTime)) {
-                        return GestureDetector(
-                          onTap: () {
-                            toNext(flight, flightText, widget.flightClass);
-                          },
-                          child: Container(
-                              //width: double.infinity,
-                              margin: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  boxShadow: const [
-                                    BoxShadow(
-                                        blurRadius: 2, offset: Offset(0, 0))
-                                  ],
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.white),
-                              child: Padding(
-                                padding: const EdgeInsets.all(20.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                            return GestureDetector(
+                              onTap: () {
+                                toNext(flight, flightText, widget.flightClass);
+                              },
+                              child: Container(
+                                  //width: double.infinity,
+                                  margin: const EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                      boxShadow: const [
+                                        BoxShadow(
+                                            blurRadius: 2, offset: Offset(0, 0))
+                                      ],
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.white),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text(flight.fromCity),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(flight.fromCity),
+                                            Container(
+                                              height: 40,
+                                              child: Image.asset(
+                                                  'images/flightFromTo.jpg'),
+                                            ),
+                                            Text(flight.toCity),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              //MainAxisAlignment.spaceEvenly,
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              _flightsService
+                                                  .formatTime(flight.depTime),
+                                            ),
+                                            Text(calculateTravelTime(
+                                                flight.depDate,
+                                                flight.arrDate,
+                                                flight.depTime,
+                                                flight.arrTime)),
+                                            Text(
+                                              _flightsService
+                                                  .formatTime(flight.arrTime),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
                                         Container(
-                                          height: 40,
-                                          child: Image.asset(
-                                              'images/flightFromTo.jpg'),
+                                          height: 1.0,
+                                          color: Colors.black,
+                                          width: double.infinity,
+                                          //child: SizedBox.expand(),
                                         ),
-                                        Text(flight.toCity),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          //MainAxisAlignment.spaceEvenly,
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          _flightsService
-                                              .formatTime(flight.depTime),
-                                        ),
-                                        Text(calculateTravelTime(
-                                            flight.depDate,
-                                            flight.arrDate,
-                                            flight.depTime,
-                                            flight.arrTime)),
-                                        Text(
-                                          _flightsService
-                                              .formatTime(flight.arrTime),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Container(
-                                      height: 1.0,
-                                      color: Colors.black,
-                                      width: double.infinity,
-                                      //child: SizedBox.expand(),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          "Price",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.green),
-                                        ),
-                                        Text(
-                                          "$flightText SAR",
-                                          style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.green),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Text(
+                                              "Price",
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.green),
+                                            ),
+                                            Text(
+                                              "$flightText SAR",
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.green),
+                                            )
+                                          ],
                                         )
                                       ],
-                                    )
-                                  ],
-                                ),
-                              )),
-                        );
-                      } else {
+                                    ),
+                                  )),
+                            );
+                          } else {
                             return const SizedBox.shrink();
                           }
-                        },);
+                        },
+                      );
                     },
                   );
                 } else {
@@ -248,6 +258,3 @@ class _RoundTripSearch1State extends State<RoundTripSearch1> {
         )));
   }
 }
-
-
-

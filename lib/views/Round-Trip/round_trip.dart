@@ -283,7 +283,7 @@ class _RoundTripState extends State<RoundTrip> {
                                       style: TextStyle(fontSize: 15)),
                                   Radio(
                                     activeColor: const Color.fromARGB(255, 13,
-                                        213, 130), //new line(activeColor)
+                                        213, 130), 
                                     value: passengerType[1],
                                     groupValue: currentPassenger,
                                     onChanged: (value) {
@@ -358,9 +358,15 @@ class _RoundTripState extends State<RoundTrip> {
                                   onTap: () {
                                     setState(() {
                                       String? saveCityName;
+                                      String? saveCityDelName;
                                       saveCityName = selectedCity2;
+                                      saveCityDelName = cityNameDel2;
+
                                       selectedCity2 = selectedCity1;
                                       selectedCity1 = saveCityName;
+
+                                      cityNameDel2 = cityNameDel;
+                                      cityNameDel = saveCityDelName;
                                     });
                                   },
                                   child:
@@ -521,15 +527,6 @@ class _RoundTripState extends State<RoundTrip> {
                           }); //new line
                           if (_formKey.currentState!.validate()) {
                             toNext();
-                            List<flightInformation> flightNameTestCopy =
-                                List.from(forSave);
-                            flightNameTest = flightNameTestCopy;
-                            // print("For save: " " ${forSave.length}");
-                            // print("flightNameTest: ${flightNameTest.length}");
-                            cityNameDel = null;
-                            cityNameDel2 = null;
-                            indexToUpdate = null;
-                            indexToUpdate2 = null;
                           }
                         }
                       },

@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:AirTours/views/Global/global_var.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants/pages_route.dart';

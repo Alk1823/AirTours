@@ -257,20 +257,20 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                               );
 
                               if (result == true) {
-                                setState(() {
-                                  showSuccessDialog(context,
+                                 setState(()  {
+                                   showSuccessDialog(context,
                                       'Booking successfully upgraded.');
                                   bookingType = 'Business';
                                 });
                               } else {
-                                showErrorDialog(
+                                 showErrorDialog(
                                     context, 'Failed to upgrade booking.');
                               }
                             } else {
-                              showErrorDialog(context, 'Payment Failed');
+                               showErrorDialog(context, 'Payment Failed');
                             }
                           } else {
-                            showErrorDialog(context,
+                             showErrorDialog(context,
                                 'Cannot Upgrade Booking, Upgradation Deadline Passed');
                           }
                         },
@@ -309,7 +309,7 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                             flightClass: currentBooking.bookingClass,
                             numOfPas: currentBooking.numOfSeats);
                         if (result == true) {
-                          c.retrievePreviousBalance(
+                          await c.retrievePreviousBalance(
                               FirebaseAuthProvider.authService()
                                   .currentUser!
                                   .id,
@@ -318,7 +318,7 @@ class _OneWayDetailsState extends State<OneWayDetails> {
                               context, 'Booking successfully deleted.');
                           Navigator.pop(context);
                         } else {
-                          showErrorDialog(context,
+                          await showErrorDialog(context,
                               "Cannot Cancel Booking, Cancellation Deadline Passed");
                         }
                       },

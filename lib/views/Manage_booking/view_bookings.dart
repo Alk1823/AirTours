@@ -80,6 +80,14 @@ class _ViewBookingsState extends State<ViewBookings> {
                     return const CircularProgressIndicator();
                   } else if (snapshot.hasData) {
                     final currentBookings = snapshot.data!;
+                    if (currentBookings.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          "No Bookings Yet",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      );
+                    }
 
                     return ListView.builder(
                       itemCount: currentBookings.length,
@@ -360,7 +368,7 @@ class _ViewBookingsState extends State<ViewBookings> {
                 },
               );
             } else {
-              return const Text('Not Available');
+              return const CircularProgressIndicator();
             }
           } else {
             return const CircularProgressIndicator();

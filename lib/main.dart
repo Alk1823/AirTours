@@ -1,7 +1,9 @@
+import 'package:AirTours/services/cloud/firebase_cloud_storage.dart';
 import 'package:AirTours/services_auth/firebase_auth_provider.dart';
 import 'package:AirTours/views/Admin/add_admin.dart';
 import 'package:AirTours/views/Admin/admin.dart';
 import 'package:AirTours/views/Global/bottom_bar.dart';
+import 'package:AirTours/views/Global/global_var.dart';
 import 'package:AirTours/views/Manage_booking/upgrade_card.dart';
 import 'package:AirTours/views/Profile/profile_view.dart';
 import 'package:AirTours/views/Profile/add_balance.dart';
@@ -18,10 +20,10 @@ import 'package:AirTours/views/Welcome_pages/welcome_page.dart';
 import 'package:flutter/material.dart';
 import 'constants/pages_route.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: const HomePage(),
     routes: {
       loginRoute: (context) => const LoginView(),
@@ -33,20 +35,20 @@ Future<void> main() async {
       addAdminRoute: (context) => const AddAdmin(),
       updateEmailRoute: (context) => const UpdateEmailView(),
       updatePasswordRoute: (context) => const UpdatePasswordView(),
-      addBalanceRoute:(context) => const AddBalance(),
+      addBalanceRoute: (context) => const AddBalance(),
       profileRoute: (context) => const ProfileView(),
       loginForEmailChangesRoute: (context) => const LoginForEmailChanges(),
-      loginForPasswordChangesRoute: (context) => const LoginForPasswordChanges(),
-      loginForDeleteRoute:(context) => const LoginForDelete(),
-      upgradeCard:(context) => const UpgradeCard(),
-      resetView:(context) => const ResetPassword() 
+      loginForPasswordChangesRoute: (context) =>
+          const LoginForPasswordChanges(),
+      loginForDeleteRoute: (context) => const LoginForDelete(),
+      upgradeCard: (context) => const UpgradeCard(),
+      resetView: (context) => const ResetPassword()
     },
   ));
 }
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +58,21 @@ class HomePage extends StatelessWidget {
         switch (snapshot.connectionState) {
           case ConnectionState.done:
             final user = FirebaseAuthProvider.authService().currentUser;
+            FirebaseCloudStorage c = FirebaseCloudStorage();
             if (user != null) {
               if (user.isEmailVerified) {
-                return const Bottom();
+                return FutureBuilder(
+                  future: c.isAdmin(email: FirebaseAuthProvider.authService().currentUser!.email),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.data! == true) {
+                            return const CreateFlight();
+                          } else {
+                            return const Bottom();
+                          }
+                  },);
               } else {
                 return const VerifyEmailView();
               }

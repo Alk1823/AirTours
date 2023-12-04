@@ -8,6 +8,6 @@ Future<double> showUserBalance() async {
   String userId = FirebaseAuthProvider.authService().currentUser!.id;
   final userDocumentRef = userCollectionRef.doc(userId);
   final userDocumentSnap = await userDocumentRef.get();
-  final userBalance = userDocumentSnap.data()![balanceFieldName] + 0.0; //to retrieve it as double if it was saved in the DB int
+  final userBalance = userDocumentSnap.data()![balanceFieldName] + 0.0; 
   return userBalance;
 }

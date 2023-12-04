@@ -111,9 +111,7 @@ class TicketFirestore {
       for (QueryDocumentSnapshot document in documents) {
         await document.reference.delete();
       }
-    } catch (e) {
-      print('Error deleting tickets: $e');
-    }
+    } catch (_) {}
   }
 
   Future<double> updateRelatedTickets({
@@ -139,13 +137,11 @@ class TicketFirestore {
         totalbookingPrice = totalbookingPrice + updatedTicketPrice;
 
         await document.reference.update({
-          ticketClassField: 'business',
+          ticketClassField: 'Business',
           ticketPriceField: updatedTicketPrice,
         });
       }
-    } catch (e) {
-      print('Error updating tickets: $e');
-    }
+    } catch (_) {}
     return totalbookingPrice;
   }
 }

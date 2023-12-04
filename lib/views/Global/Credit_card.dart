@@ -11,6 +11,7 @@ import '../../services/cloud/firestore_booking.dart';
 import '../../services/cloud/firestore_ticket.dart';
 import '../../services_auth/firebase_auth_provider.dart';
 import '../../utilities/show_error.dart';
+import 'flight_class_for_search.dart';
 
 class Creditcard extends StatefulWidget {
   final String id1;
@@ -95,7 +96,7 @@ class _CreditcardState extends State<Creditcard> {
           lastName: ticket.lastName,
           ticketPrice: ticket.ticketPrice,
           bookingReference: tmp,
-          ticketUserId: '1',
+          ticketUserId: FirebaseAuthProvider.authService().currentUser!.id,
           birthDate: ticket.birthDate,
           flightReference: ticket.flightReference,
           ticketClass: widget.flightClass);
@@ -105,13 +106,6 @@ class _CreditcardState extends State<Creditcard> {
   double retrieveTotBookingsPrice() {
     double totBookingPrice = 0;
     for (final x in widget.tickets) {
-      final DateTime now = DateTime.now();
-      final Duration difference = now.difference(x.birthDate);
-      final int age = (difference.inDays / 365).floor();
-      if (age < 12) {
-        totBookingPrice = totBookingPrice + x.ticketPrice / 2; //50% disc for a child
-        continue;
-      }
       totBookingPrice = totBookingPrice + x.ticketPrice;
     }
     return totBookingPrice;
@@ -155,7 +149,7 @@ class _CreditcardState extends State<Creditcard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Booking Price: $price',
+                    'Booking Price: ${price.toStringAsFixed(2)}',
                     style: const TextStyle(fontSize: 16),
                   ),
                   const SizedBox(
@@ -170,7 +164,7 @@ class _CreditcardState extends State<Creditcard> {
                         return Text('Error: ${snapshot.error}');
                       } else if (snapshot.hasData) {
                         return Text(
-                          "Your Balance: ${snapshot.data!}",
+                          "Your Balance: ${snapshot.data!.toStringAsFixed(2)}",
                           style: const TextStyle(fontSize: 16),
                         );
                       } else {
@@ -397,6 +391,10 @@ class _CreditcardState extends State<Creditcard> {
                               ),
                             ),
                             validator: (value) {
+                              DateTime date = DateTime.now();
+                              int nowYear = date.year.toInt();
+                              int currentYear = nowYear % 100;
+                              int currentMonth = date.month.toInt();
                               if (value!.isEmpty) {
                                 return "Enter an Expiry Date";
                               }
@@ -413,14 +411,18 @@ class _CreditcardState extends State<Creditcard> {
                                 return "Enter a valid Expiry Date";
                               }
 
-                              if (month > 12 && year < 23) {
+                              if (month > 12 && year < currentYear) {
                                 return "Enter the Expiry Date correctly";
                               }
                               if (month > 12) {
                                 return "Enter the month correctly";
                               }
-                              if (year < 23) {
+                              if (year < currentYear) {
                                 return "Enter the year correctly";
+                              } 
+                              if (month <= currentMonth &&
+                                  year <= currentYear) {
+                                return ("Invalid Card");
                               }
                               return null;
                             },
@@ -477,6 +479,13 @@ class _CreditcardState extends State<Creditcard> {
                                   bottomRoute, (route) => false);
                               await showSuccessDialog(
                                   context, "Flight is booked");
+                              List<flightInformation> flightNameTestCopy =
+                                  List.from(forSave);
+                              flightNameTest = flightNameTestCopy;
+                              cityNameDel = null;
+                              cityNameDel2 = null;
+                              indexToUpdate = null;
+                              indexToUpdate2 = null;
                             }
                           },
                           child: Container(

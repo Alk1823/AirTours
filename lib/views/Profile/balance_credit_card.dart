@@ -259,6 +259,10 @@ class _ChargeBalanceState extends State<ChargeBalance> {
                               ),
                             ),
                             validator: (value) {
+                              DateTime date = DateTime.now();
+                              int nowYear = date.year.toInt();
+                              int currentYear = nowYear % 100;
+                              int currentMonth = date.month.toInt();
                               if (value!.isEmpty) {
                                 return "Enter an Expiry Date";
                               }
@@ -275,14 +279,18 @@ class _ChargeBalanceState extends State<ChargeBalance> {
                                 return "Enter a valid Expiry Date";
                               }
 
-                              if (month > 12 && year < 23) {
+                              if (month > 12 && year < currentYear) {
                                 return "Enter the Expiry Date correctly";
                               }
                               if (month > 12) {
                                 return "Enter the month correctly";
                               }
-                              if (year < 23) {
+                              if (year < currentYear) {
                                 return "Enter the year correctly";
+                              } 
+                              if (month <= currentMonth &&
+                                  year <= currentYear) {
+                                return ("Invalid Card");
                               }
                               return null;
                             },

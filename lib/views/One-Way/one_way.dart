@@ -13,8 +13,8 @@ class OneWay extends StatefulWidget {
 }
 
 class _OneWayState extends State<OneWay> {
-  int checkIfSelectCityFrom = 0; 
-  int checkIfSelectCityTo = 0; 
+  int checkIfSelectCityFrom = 0; //new line
+  int checkIfSelectCityTo = 0; //new line
   final _formKey = GlobalKey<FormState>();
   String? selectedCity1;
   String? selectedCity2;
@@ -132,6 +132,8 @@ class _OneWayState extends State<OneWay> {
           builder: (BuildContext context, StateSetter myState) {
             return Center(
               child: Column(
+                  //mainAxisAlignment:
+                  //  MainAxisAlignment.center,
                   children: [
                     const SizedBox(
                       height: 20,
@@ -297,6 +299,7 @@ class _OneWayState extends State<OneWay> {
     );
   }
 
+//
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -306,6 +309,7 @@ class _OneWayState extends State<OneWay> {
               child: Form(
                 key: _formKey,
                 child: Column(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(
                       height: 5,
@@ -318,12 +322,12 @@ class _OneWayState extends State<OneWay> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: const Color.fromARGB(255, 13, 213,
-                              130), 
+                              130), //new line(border) and(color) Green color
                         ),
                         boxShadow: const [
                           BoxShadow(
                               blurRadius: 1,
-                              offset: Offset(0, 0)) 
+                              offset: Offset(0, 0)) //change blurRadius to 1
                         ],
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.white,
@@ -335,7 +339,7 @@ class _OneWayState extends State<OneWay> {
                               _navigateToCitySelectionPage(context, 1);
                             },
                             child: SearchFlightFrom(selectedCity1,
-                                1), 
+                                1), //new line after removing continer
                           ),
                           Row(
                             children: [
@@ -348,9 +352,15 @@ class _OneWayState extends State<OneWay> {
                                   onTap: () {
                                     setState(() {
                                       String? saveCityName;
+                                      String? saveCityDelName;
                                       saveCityName = selectedCity2;
+                                      saveCityDelName = cityNameDel2;
+
                                       selectedCity2 = selectedCity1;
                                       selectedCity1 = saveCityName;
+
+                                      cityNameDel2 = cityNameDel;
+                                      cityNameDel = saveCityDelName;
                                     });
                                   },
                                   child:
@@ -362,18 +372,18 @@ class _OneWayState extends State<OneWay> {
                               _navigateToCitySelectionPage(context, 2);
                             },
                             child: SearchFlightFrom(selectedCity2,
-                                2), 
+                                2), //new line after removing continer
                           ),
                         ],
                       ),
                     ),
-                    if (checkIfSelectCityFrom == 1) 
+                    if (checkIfSelectCityFrom == 1) //new line
                       checkSerchValidation(
                           checkIfSelectCityFrom,
                           checkIfSelectCityTo,
                           selectedCity1.toString(),
                           selectedCity2
-                              .toString()), 
+                              .toString()), //new line(to check user select city)
                     const SizedBox(
                       height: 5,
                     ),
@@ -386,13 +396,13 @@ class _OneWayState extends State<OneWay> {
                           decoration: BoxDecoration(
                               border: Border.all(
                                 color: const Color.fromARGB(255, 13, 213,
-                                    130), 
+                                    130), //new line(border) and(color) Green color
                               ),
                               boxShadow: const [
                                 BoxShadow(
                                     blurRadius: 1,
                                     offset:
-                                        Offset(0, 0)) 
+                                        Offset(0, 0)) //change blurRadius to 1
                               ],
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.white),
@@ -432,8 +442,11 @@ class _OneWayState extends State<OneWay> {
                                           firstDate: DateTime.now(),
                                           lastDate: DateTime(2024));
                                       if (newDate == null) return;
+                                      //print(start);
+                                      //print("-----------");
                                       setState(() {
                                         dateTime = newDate;
+                                        // print(start);
                                       });
                                     },
                                   ),
@@ -444,9 +457,10 @@ class _OneWayState extends State<OneWay> {
                         ))
                       ],
                     ),
+                    //here
                     const SizedBox(
                       height: 5,
-                    ), 
+                    ), //add new size box h:5
                     GestureDetector(
                         onTap: () {
                           showModalBottomSheetWidget();
@@ -459,16 +473,16 @@ class _OneWayState extends State<OneWay> {
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: const Color.fromARGB(255, 13, 213,
-                                    130), 
+                                    130), //new line(border) and(color) Green color
                               ),
                               boxShadow: const [
                                 BoxShadow(
                                     blurRadius: 1,
                                     offset:
-                                        Offset(0, 0)) 
+                                        Offset(0, 0)) //change blurRadius to 1
                               ],
                               borderRadius:
-                                  BorderRadius.circular(10), 
+                                  BorderRadius.circular(10), //change this to 10
                               color: Colors.white,
                             ),
                             child: Row(
@@ -481,37 +495,44 @@ class _OneWayState extends State<OneWay> {
                             ))),
                     const SizedBox(
                       height: 5,
-                    ), 
+                    ), //create sized box
                     GestureDetector(
                       onTap: () {
                         if (selectedCity1 == null) {
+                          //new line
                           setState(() {
-                            checkIfSelectCityFrom = 1; 
-                          }); 
+                            //new line
+                            checkIfSelectCityFrom = 1; //new line
+                          }); //new line
                         } else {
-                          checkIfSelectCityFrom = 0; 
-                        } 
+                          //new line
+                          checkIfSelectCityFrom = 0; //new line
+                        } //new line
                         if (selectedCity2 == null) {
+                          //new line
                           setState(() {
-                            checkIfSelectCityTo = 1; 
-                          }); 
+                            //new line
+                            checkIfSelectCityTo = 1; //new line
+                          }); //new line
                         } else {
-                          checkIfSelectCityTo = 0; 
-                        } 
+                          //new line
+                          checkIfSelectCityTo = 0; //new line
+                        } //new line
                         if (selectedCity1 != null && selectedCity2 != null) {
+                          //new line
                           setState(() {
-                            checkIfSelectCityFrom = 0; 
-                            checkIfSelectCityTo = 0; 
-                          }); 
+                            checkIfSelectCityFrom = 0; //new line
+                            checkIfSelectCityTo = 0; //new line
+                          }); //new line
                           if (_formKey.currentState!.validate()) {
                             toNext();
-                            List<flightInformation> flightNameTestCopy =
-                                List.from(forSave);
-                            flightNameTest = flightNameTestCopy;
-                            cityNameDel = null;
-                            cityNameDel2 = null;
-                            indexToUpdate = null;
-                            indexToUpdate2 = null;
+                            // List<flightInformation> flightNameTestCopy =
+                            //     List.from(forSave);
+                            // flightNameTest = flightNameTestCopy;
+                            // cityNameDel = null;
+                            // cityNameDel2 = null;
+                            // indexToUpdate = null;
+                            // indexToUpdate2 = null;
                           }
                         }
                       },

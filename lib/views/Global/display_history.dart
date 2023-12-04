@@ -40,6 +40,14 @@ class _HistoryState extends State<History> {
               snapshot.connectionState == ConnectionState.active) {
             if (snapshot.hasData) {
               final allBookings = snapshot.data as Iterable<CloudBooking>;
+              if (allBookings.isEmpty) {
+                return const Center(
+                  child: Text(
+                    "No Bookings Yet",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                );
+              }
 
               return ListView.builder(
                 itemCount: allBookings.length,
@@ -61,7 +69,6 @@ class _HistoryState extends State<History> {
                         }
 
                         return Container(
-                          //width: double.infinity,
                           margin: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
                               boxShadow: const [

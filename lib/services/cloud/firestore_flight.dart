@@ -19,7 +19,7 @@ class FlightFirestore {
   }) {
     Timestamp depDateStamp = Timestamp.fromDate(date);
 
-    if (flightClass == 'business') {
+    if (flightClass == 'Business') {
       final allFlights = flights
           .where(fromField, isEqualTo: from)
           .where(toField, isEqualTo: to)
@@ -64,7 +64,7 @@ class FlightFirestore {
       toAirField: toAirport,
       numOfbusField: numOfBusiness,
       numOfEcoField: numOfGuest,
-      guePriceField: guestPrice,
+      ecoPriceField: guestPrice,
       busPriceField: busPrice,
       depDateField: depDate,
       arrDateField: arrDate,
@@ -74,6 +74,7 @@ class FlightFirestore {
       numOfAvaEcoField: numOfGuest,
     });
     final fetchedFlight = await document.get();
+
     return CloudFlight(
         documentId: fetchedFlight.id,
         fromCity: fromCity,
@@ -112,7 +113,7 @@ class FlightFirestore {
         toAirport: fetchedFlight.data()![toAirField],
         numOfBusiness: fetchedFlight.data()![numOfbusField],
         numOfEco: fetchedFlight.data()![numOfEcoField],
-        ecoPrice: fetchedFlight.data()![guePriceField],
+        ecoPrice: fetchedFlight.data()![ecoPriceField],
         busPrice: fetchedFlight.data()![busPriceField],
         depDate: fetchedFlight.data()![depDateField],
         arrDate: fetchedFlight.data()![arrDateField],
@@ -133,7 +134,7 @@ class FlightFirestore {
           toAirport: fetchedFlight.data()![toAirField],
           numOfBusiness: fetchedFlight.data()![numOfbusField],
           numOfEco: fetchedFlight.data()![numOfEcoField],
-          ecoPrice: fetchedFlight.data()![guePriceField],
+          ecoPrice: fetchedFlight.data()![ecoPriceField],
           busPrice: fetchedFlight.data()![busPriceField],
           depDate: fetchedFlight.data()![depDateField],
           arrDate: fetchedFlight.data()![arrDateField],
@@ -295,9 +296,7 @@ class FlightFirestore {
           await tempFlight.update({numOfAvaEcoField: newSeats});
         }
       }
-    } catch (e) {
-      print(e);
-    }
+    } catch (_) {}
   }
 
   Future<void> increaseNumberOfSeats(
@@ -306,7 +305,7 @@ class FlightFirestore {
       final tempFlight = flights.doc(flightId);
       final fetchedFlight = await tempFlight.get();
 
-      if (flightClass == 'business') {
+      if (flightClass == 'Business') {
         int currentSeats = fetchedFlight.data()![numOfAvabusField];
         if (currentSeats > 0) {
           int newSeats = currentSeats + numOfSeats;
@@ -319,8 +318,6 @@ class FlightFirestore {
           await tempFlight.update({numOfAvaEcoField: newSeats});
         }
       }
-    } catch (e) {
-      print(e);
-    }
+    } catch (_) {}
   }
 }

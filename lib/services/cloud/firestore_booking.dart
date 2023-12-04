@@ -44,10 +44,10 @@ class BookingFirestore {
           int currentBus1 = fetchedDep.data()![numOfAvabusField];
           double busSeatPrice1 = fetchedDep.data()![busPriceField];
           if (currentBus1 >= numOfPas) {
-            flightFirestore.decreaseNumberOfSeats(
+            await flightFirestore.decreaseNumberOfSeats(
                 departureFlightId, numOfPas, 'Business');
 
-            flightFirestore.increaseNumberOfSeats(
+            await flightFirestore.increaseNumberOfSeats(
                 departureFlightId, numOfPas, 'Economy');
 
             double totalPrice = await ticketFirestore.updateRelatedTickets(
@@ -161,14 +161,14 @@ class BookingFirestore {
 
           if (timeDifference.inHours >= 24) {
             await tmpBooking.delete();
-            flightFirestore.increaseNumberOfSeats(
+            await flightFirestore.increaseNumberOfSeats(
                 flightId1, numOfPas, flightClass);
 
             flag = true;
             await ticketFirestore.deleteRelatedTickets(bookingId: bookingId);
             //roundtrip
             if (flightId2 != 'none') {
-              flightFirestore.increaseNumberOfSeats(
+              await flightFirestore.increaseNumberOfSeats(
                   flightId2, numOfPas, flightClass);
             }
           }

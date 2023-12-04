@@ -80,7 +80,7 @@ class _UpgradeCardState extends State<UpgradeCard> {
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
                       } else if (snapshot.hasData) {
-                        return Text('Upgrade Price: ${snapshot.data!}',
+                        return Text('Upgrade Price: ${snapshot.data!.toStringAsFixed(2)}',
                             style: const TextStyle(fontSize: 16));
                       } else {
                         return const Text('No Data Available');
@@ -99,7 +99,7 @@ class _UpgradeCardState extends State<UpgradeCard> {
                         return Text('Error: ${snapshot.error}');
                       } else if (snapshot.hasData) {
                         return Text(
-                          "Your Balance: ${snapshot.data!}",
+                          "Your Balance: ${snapshot.data!.toStringAsFixed(2)}",
                           style: const TextStyle(fontSize: 16),
                         );
                       } else {
@@ -326,6 +326,10 @@ class _UpgradeCardState extends State<UpgradeCard> {
                               ),
                             ),
                             validator: (value) {
+                              DateTime date = DateTime.now();
+                              int nowYear = date.year.toInt();
+                              int currentYear = nowYear % 100;
+                              int currentMonth = date.month.toInt();
                               if (value!.isEmpty) {
                                 return "Enter an Expiry Date";
                               }
@@ -342,14 +346,18 @@ class _UpgradeCardState extends State<UpgradeCard> {
                                 return "Enter a valid Expiry Date";
                               }
 
-                              if (month > 12 && year < 23) {
+                              if (month > 12 && year < currentYear) {
                                 return "Enter the Expiry Date correctly";
                               }
                               if (month > 12) {
                                 return "Enter the month correctly";
                               }
-                              if (year < 23) {
+                              if (year < currentYear) {
                                 return "Enter the year correctly";
+                              } 
+                              if (month <= currentMonth &&
+                                  year <= currentYear) {
+                                return ("Invalid Card");
                               }
                               return null;
                             },

@@ -42,7 +42,7 @@ class CloudFlight {
         toCity = snapshot.data()[toField] as String,
         fromAirport = snapshot.data()[fromAirField] as String,
         toAirport = snapshot.data()[toAirField] as String,
-        ecoPrice = snapshot.data()[guePriceField] as double,
+        ecoPrice = snapshot.data()[ecoPriceField] as double,
         busPrice = snapshot.data()[busPriceField] as double,
         numOfBusiness = snapshot.data()[numOfbusField] as int,
         numOfEco = snapshot.data()[numOfEcoField] as int,

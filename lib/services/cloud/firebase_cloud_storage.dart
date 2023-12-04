@@ -17,10 +17,9 @@ class FirebaseCloudStorage {
   final flight = FirebaseFirestore.instance.collection('flights');
   final FlightFirestore flights = FlightFirestore();
 
-  Future<bool> isCurrentBooking({required ownerUserId}) async { 
-    final booking = await bookings.where(
-      bookingUserIdField, isEqualTo: ownerUserId
-    ).get();
+  Future<bool> isCurrentBooking({required ownerUserId}) async {
+    final booking =
+        await bookings.where(bookingUserIdField, isEqualTo: ownerUserId).get();
     final documents = booking.docs;
     if (documents.isNotEmpty) {
       for (final document in documents) {
@@ -37,13 +36,13 @@ class FirebaseCloudStorage {
       }
       return false;
     } else {
-      return false; 
+      return false;
     }
   }
 
   Future<void> deleteUser({required ownerUserId}) async {
     try {
-      final userDocRef = user.doc(ownerUserId); 
+      final userDocRef = user.doc(ownerUserId);
 
       final booking = await bookings
           .where(bookingUserIdField, isEqualTo: ownerUserId)
@@ -58,29 +57,25 @@ class FirebaseCloudStorage {
 
           final bool isCurrent = await flights.isCurrentFlight(depId, returnId);
 
-        if (!isCurrent) {
-          await userDocRef.delete();
-          await FirebaseAuthProvider.authService().deleteAccount();
-          break;
-        } 
+          if (!isCurrent) {
+            await userDocRef.delete();
+            await FirebaseAuthProvider.authService().deleteAccount();
+            break;
+          }
         }
-        
       } else {
         await userDocRef.delete();
         await FirebaseAuthProvider.authService().deleteAccount();
       }
-      
     } catch (_) {
       throw CouldNotDeleteUserException();
     }
   }
 
- Future<bool> isAdmin({required String email}) async {
-    final admin = await admins.where(
-      'email' , isEqualTo: email
-    ).get();
-    return admin.docs.isNotEmpty; 
-    } 
+  Future<bool> isAdmin({required String email}) async {
+    final admin = await admins.where('email', isEqualTo: email).get();
+    return admin.docs.isNotEmpty;
+  }
 
   Future<bool> isUser({required ownerUserId}) async {
     final docRef = user.doc(ownerUserId);
@@ -89,8 +84,7 @@ class FirebaseCloudStorage {
   }
 
   Future<void> updateUser(
-      {required String ownerUserId,
-      required String email}) async {
+      {required String ownerUserId, required String email}) async {
     try {
       DocumentReference docRef = user.doc(ownerUserId);
       await docRef.update({"email": email});
@@ -113,32 +107,31 @@ class FirebaseCloudStorage {
     }
   }
 
-  Future<double> canceledBookingPrice(
-    bookingId) async {
+  Future<double> canceledBookingPrice(bookingId) async {
     try {
       final docRef = bookings.doc(bookingId);
-  
       final docSnap = await docRef.get();
-      final bookingPrice = docSnap.data()![bookingPriceField];
-      return bookingPrice + 0.0;
+      if(docSnap.exists) {
+        final double bookingPrice = docSnap.data()![bookingPriceField] as double;
+        return bookingPrice;
+      } else {
+        return 0;
+      }
+      
     } catch (_) {
       throw CouldNotRetrieveInformationException();
     }
-  }  
+  }
 
-  Future<void> retrievePreviousBalance(
-    ownerUserId,
-    bookingPrice) async {
-      try {
-        final userDocReference = user.doc(ownerUserId);
-        final currentBalance = await showUserBalance();
-        final previousBalance = bookingPrice + currentBalance;
-        userDocReference.update(
-          {'balance':previousBalance}
-       );
-      } catch (_) {
-        throw CouldNotUpdateInformationException();
-      }
+  Future<void> retrievePreviousBalance(ownerUserId, bookingPrice) async {
+    try {
+      final userDocReference = user.doc(ownerUserId);
+      final currentBalance = await showUserBalance();
+      final double previousBalance = bookingPrice + ( currentBalance - bookingPrice * 0.07 );
+      userDocReference.update({'balance': previousBalance});
+    } catch (_) {
+      throw CouldNotUpdateInformationException();
+    }
   }
 
   Future<double> upgradePrice() async {
@@ -146,41 +139,38 @@ class FirebaseCloudStorage {
     final docSnap = await doc.get();
     final bookingClass = docSnap.data()![bookingClassField];
     final depFlight = docSnap.data()![departureFlightField];
-    final doc2 = flight.doc(depFlight); 
+    final doc2 = flight.doc(depFlight);
     final doc2Snap = await doc2.get();
     final busFlightPrice = doc2Snap.data()![busPriceField] + 0.0;
     if (bookingClass != 'business') {
-      final ticket = await tickets.where(
-        bookingReferenceField, isEqualTo: whichBooking
-      ).get();
+      final ticket = await tickets
+          .where(bookingReferenceField, isEqualTo: whichBooking)
+          .get();
       final documents = ticket.docs;
       int counter = 0;
       double ticketsPrice = 0;
-      for(final document in documents) {
-        ticketsPrice += document[ticketPriceField]; 
+      for (final document in documents) {
+        ticketsPrice += document[ticketPriceField];
         counter += 1;
       }
       final totBusPrice = busFlightPrice * counter;
       final upgradePrice = totBusPrice - ticketsPrice;
       return upgradePrice + 0.0;
     } else {
-      return 0; 
+      return 0;
     }
-    
   }
 
-  Future<int> convertUserToAdmin({required String email,required String phoneNum}) async {
-    final users = await user.where(
-      'email' , isEqualTo: email
-    ).get();
+  Future<int> convertUserToAdmin(
+      {required String email, required String phoneNum}) async {
+    final users = await user.where('email', isEqualTo: email).get();
     final documents = users.docs;
     if (documents.isNotEmpty) {
       bool isExist = await isAdminExist(email);
       if (!isExist) {
         await admins.add({"email": email});
-      return 0;
-      }
-      else {
+        return 0;
+      } else {
         return 1; //admin is there
       }
     } else {
@@ -189,23 +179,20 @@ class FirebaseCloudStorage {
   }
 
   Future<bool> isAdminExist(String email) async {
-    final admin = await admins.where(
-      emailFieldName , isEqualTo: email
-    ).get();
+    final admin = await admins.where(emailFieldName, isEqualTo: email).get();
     final documents = admin.docs;
     return documents.isNotEmpty;
   }
 
   Future<bool> isDuplicateFlight(String flightId) async {
     final userId = FirebaseAuthProvider.authService().currentUser!.id;
-    final booking = await bookings.where(
-      bookingUserIdField , isEqualTo: userId
-    ).get();
+    final booking =
+        await bookings.where(bookingUserIdField, isEqualTo: userId).get();
     final documents = booking.docs;
     bool isDuplicate = false;
     if (documents.isNotEmpty) {
       for (final document in documents) {
-        if (document[departureFlightField] == flightId ) {
+        if (document[departureFlightField] == flightId) {
           isDuplicate = true;
         }
       }
@@ -217,14 +204,14 @@ class FirebaseCloudStorage {
 
   Future<bool> isDuplicateFlight2(String flightId) async {
     final userId = FirebaseAuthProvider.authService().currentUser!.id;
-    final booking = await bookings.where(
-      bookingUserIdField , isEqualTo: userId
-    ).get();
+    final booking =
+        await bookings.where(bookingUserIdField, isEqualTo: userId).get();
     final documents = booking.docs;
     bool isDuplicate = false;
     if (documents.isNotEmpty) {
       for (final document in documents) {
-        if (document[returnFlightField] == flightId || document[departureFlightField] == flightId) {
+        if (document[returnFlightField] == flightId ||
+            document[departureFlightField] == flightId) {
           isDuplicate = true;
         }
       }
@@ -233,6 +220,4 @@ class FirebaseCloudStorage {
       return isDuplicate;
     }
   }
-
 }
-
