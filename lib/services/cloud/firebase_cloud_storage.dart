@@ -224,7 +224,7 @@ class FirebaseCloudStorage {
     bool isDuplicate = false;
     if (documents.isNotEmpty) {
       for (final document in documents) {
-        if (document[returnFlightField] == flightId) {
+        if (document[returnFlightField] == flightId || document[departureFlightField] == flightId) {
           isDuplicate = true;
         }
       }

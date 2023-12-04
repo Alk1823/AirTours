@@ -61,6 +61,7 @@ class _EnterinfoState extends State<Enterinfo> {
   String? valueMidleName;
   int? ssn1;
   DateTime? birthD;
+  List<String> numbers = [];
 
   CloudBooking? booking;
 
@@ -100,6 +101,24 @@ class _EnterinfoState extends State<Enterinfo> {
       baggagePrice -= 251;
       baggageCount--;
     });
+  }
+
+  bool isDuplicate(String ssn) {
+    if (numbers.isNotEmpty) {
+      numbers.length = pasCount - 1;
+      if (numbers.isNotEmpty) {
+        for (final i in numbers) {
+          if (i == ssn) {
+            return true;
+          }
+        }
+        return false;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   @override
@@ -386,6 +405,9 @@ class _EnterinfoState extends State<Enterinfo> {
                               if (!RegExp(r'^\d{10}$').hasMatch(value)) {
                                 return 'Please enter a valid ID number (10 digits)';
                               }
+                              if (isDuplicate(ssn.text)) {
+                                return 'ID is already in use';
+                              }
                               int sum = 0;
                               for (int i = 0; i < 9; i++) {
                                 int digit = int.parse(value[i]);
@@ -609,6 +631,7 @@ class _EnterinfoState extends State<Enterinfo> {
                             );
                             tickets.add(temp2!);
                           }
+                          numbers.add(ssn.text);
                           fName.clear();
                           mName.clear();
                           lName.clear();
