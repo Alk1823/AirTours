@@ -26,6 +26,7 @@ class _UpgradeCardState extends State<UpgradeCard> {
   late double balance;
   bool notInitialized = true;
   bool notInitialized2 = true;
+  late double reward;
 
   Future<double> showBalance() async {
     if (notInitialized) {
@@ -38,6 +39,7 @@ class _UpgradeCardState extends State<UpgradeCard> {
   Future<double> setPrice() async {
     if (notInitialized2 == true) {
       price = await f.upgradePrice();
+      reward = price;
       notInitialized2 = false;
     }
     return price;
@@ -406,7 +408,8 @@ class _UpgradeCardState extends State<UpgradeCard> {
                                   .currentUser!
                                   .id;
                               final docR = user.doc(userId);
-                              await docR.update({'balance': balance});
+                              reward = reward * 0.07;
+                              await docR.update({'balance': balance + reward});
                               Navigator.pop(context, true);
                             }
                           },

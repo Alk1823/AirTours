@@ -113,7 +113,7 @@ class FirebaseCloudStorage {
       final docSnap = await docRef.get();
       if(docSnap.exists) {
         final double bookingPrice = docSnap.data()![bookingPriceField] as double;
-        return bookingPrice;
+        return bookingPrice - bookingPrice * 0.07;
       } else {
         return 0;
       }
@@ -127,7 +127,7 @@ class FirebaseCloudStorage {
     try {
       final userDocReference = user.doc(ownerUserId);
       final currentBalance = await showUserBalance();
-      final double previousBalance = bookingPrice + ( currentBalance - bookingPrice * 0.07 );
+      final double previousBalance = bookingPrice + currentBalance;
       userDocReference.update({'balance': previousBalance});
     } catch (_) {
       throw CouldNotUpdateInformationException();

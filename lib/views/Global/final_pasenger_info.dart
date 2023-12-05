@@ -1,4 +1,3 @@
-import 'package:AirTours/services_auth/firebase_auth_provider.dart';
 import 'package:AirTours/views/Global/ticket.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +24,6 @@ class Enterinfo extends StatefulWidget {
 }
 
 class _EnterinfoState extends State<Enterinfo> {
-  DateTime now = DateTime.now();
   List<Ticket> tickets = [];
   Ticket? temp1;
   Ticket? temp2;
@@ -589,15 +587,7 @@ class _EnterinfoState extends State<Enterinfo> {
                           pasCount++;
                           visualPasCount++;
 
-                          //totalTicketPrice = widget.flightPrice1 + baggagePrice;
-                          
-                          totalTicketPrice = widget.flightPrice1;
-                          Duration difference = now.difference(dateTime);
-                          final int age = (difference.inDays / 365).floor();
-                          if (age < 12) {
-                            totalTicketPrice = totalTicketPrice! * 0.50;
-                          }
-                          totalTicketPrice = totalTicketPrice! + baggagePrice;
+                          totalTicketPrice = widget.flightPrice1 + baggagePrice;
                           temp1 = Ticket(
                             firstName: fName.text,
                             middleName: mName.text,
@@ -609,21 +599,13 @@ class _EnterinfoState extends State<Enterinfo> {
                             birthDate: dateTime,
                             flightReference: widget.id1,
                             ticketClass: widget.flightClass,
-                            ticketUserId: FirebaseAuthProvider.authService().currentUser!.id,
+                            ticketUserId: '1',
                           );
                           tickets.add(temp1!);
 
                           if (widget.id2 != 'none') {
-                            // totalTicketPrice =
-                            //     widget.flightPrice2 + baggagePrice;
-                            
-                          totalTicketPrice = widget.flightPrice2;
-                          Duration difference = now.difference(dateTime);
-                          final int age = (difference.inDays / 365).floor();
-                          if (age < 12) {
-                            totalTicketPrice = totalTicketPrice! * 0.50;
-                          }
-                          totalTicketPrice = totalTicketPrice! + baggagePrice;
+                            totalTicketPrice =
+                                widget.flightPrice2 + baggagePrice;
                             temp2 = Ticket(
                               firstName: fName.text,
                               middleName: mName.text,
@@ -635,7 +617,7 @@ class _EnterinfoState extends State<Enterinfo> {
                               birthDate: dateTime,
                               flightReference: widget.id2,
                               ticketClass: widget.flightClass,
-                              ticketUserId: FirebaseAuthProvider.authService().currentUser!.id,
+                              ticketUserId: '1',
                             );
                             tickets.add(temp2!);
                           }
@@ -658,15 +640,7 @@ class _EnterinfoState extends State<Enterinfo> {
                         }
 
                         if (pasCount == count) {
-                          // totalTicketPrice = widget.flightPrice1 + baggagePrice;
-                          
-                          totalTicketPrice = widget.flightPrice1;
-                          Duration difference = now.difference(dateTime);
-                          final int age = (difference.inDays / 365).floor();
-                          if (age < 12) {
-                            totalTicketPrice = totalTicketPrice! * 0.50;
-                          }
-                          totalTicketPrice = totalTicketPrice! + baggagePrice;
+                          totalTicketPrice = widget.flightPrice1 + baggagePrice;
                           temp1 = Ticket(
                             firstName: fName.text,
                             middleName: mName.text,
@@ -678,21 +652,13 @@ class _EnterinfoState extends State<Enterinfo> {
                             birthDate: dateTime,
                             flightReference: widget.id1,
                             ticketClass: widget.flightClass,
-                            ticketUserId: FirebaseAuthProvider.authService().currentUser!.id,
+                            ticketUserId: '1',
                           );
                           tickets.add(temp1!);
 
                           if (widget.id2 != 'none') {
-                            // totalTicketPrice =
-                            //     widget.flightPrice2 + baggagePrice;
-                            
-                          totalTicketPrice = widget.flightPrice2;
-                          Duration difference = now.difference(dateTime);
-                          final int age = (difference.inDays / 365).floor();
-                          if (age < 12) {
-                            totalTicketPrice = totalTicketPrice! * 0.50;
-                          }
-                          totalTicketPrice = totalTicketPrice! + baggagePrice;
+                            totalTicketPrice =
+                                widget.flightPrice2 + baggagePrice;
                             temp2 = Ticket(
                               firstName: fName.text,
                               middleName: mName.text,
@@ -704,7 +670,7 @@ class _EnterinfoState extends State<Enterinfo> {
                               birthDate: dateTime,
                               flightReference: widget.id2,
                               ticketClass: widget.flightClass,
-                              ticketUserId: FirebaseAuthProvider.authService().currentUser!.id,
+                              ticketUserId: '1',
                             );
                             tickets.add(temp2!);
                           }
@@ -713,14 +679,7 @@ class _EnterinfoState extends State<Enterinfo> {
                           pasCount++;
                         }
                         if (pasCount > count) {
-                          //totalTicketPrice = widget.flightPrice1 + baggagePrice;
-                          totalTicketPrice = widget.flightPrice1;
-                          Duration difference = now.difference(dateTime);
-                          final int age = (difference.inDays / 365).floor();
-                          if (age < 12) {
-                            totalTicketPrice = totalTicketPrice! * 0.50;
-                          }
-                          totalTicketPrice = totalTicketPrice! + baggagePrice;
+                          totalTicketPrice = widget.flightPrice1 + baggagePrice;
                           temp1 = Ticket(
                             firstName: fName.text,
                             middleName: mName.text,
@@ -732,7 +691,7 @@ class _EnterinfoState extends State<Enterinfo> {
                             birthDate: dateTime,
                             flightReference: widget.id1,
                             ticketClass: widget.flightClass,
-                            ticketUserId: FirebaseAuthProvider.authService().currentUser!.id,
+                            ticketUserId: '1',
                           );
                           if (widget.id2 == 'none') {
                             tickets[tickets.length - 1] = temp1!;
@@ -741,15 +700,8 @@ class _EnterinfoState extends State<Enterinfo> {
                           }
 
                           if (widget.id2 != 'none') {
-                            // totalTicketPrice =
-                            //     widget.flightPrice2 + baggagePrice;
-                            totalTicketPrice = widget.flightPrice2;
-                          Duration difference = now.difference(dateTime);
-                          final int age = (difference.inDays / 365).floor();
-                          if (age < 12) {
-                            totalTicketPrice = totalTicketPrice! * 0.50;
-                          }
-                          totalTicketPrice = totalTicketPrice! + baggagePrice;
+                            totalTicketPrice =
+                                widget.flightPrice2 + baggagePrice;
                             temp2 = Ticket(
                               firstName: fName.text,
                               middleName: mName.text,
@@ -761,7 +713,7 @@ class _EnterinfoState extends State<Enterinfo> {
                               birthDate: dateTime,
                               flightReference: widget.id2,
                               ticketClass: widget.flightClass,
-                              ticketUserId: FirebaseAuthProvider.authService().currentUser!.id,
+                              ticketUserId: '1',
                             );
                             tickets[tickets.length - 1] = temp2!;
                           }
